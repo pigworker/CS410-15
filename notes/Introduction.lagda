@@ -203,7 +203,7 @@ summoned via the Haskell package manager.
 With that done, the default action of \texttt{make} is to build
 these notes as \texttt{CS410-notes.pdf} at the top level.
 Naughtily, we also keep the notes in the repository, so they have
-a steady url: \url{github.com/pigworker/CS410-15}
+a steady url: \url{github.com/pigworker/CS410-15/raw/master/CS410-notes.pdf}.
 
 
 \section{What's in \texttt{Hello.agda}?}

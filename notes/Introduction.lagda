@@ -80,7 +80,7 @@ policy requires class convenors to avoid deadline collisions by
 polite negotiation, so I've agreed the following dates for handins,
 as visible on the 4th year noticeboard.
 \begin{itemize}
-\item Friday\footnote{A deadline officially on Friday means work submitted before we get to it on Monday is acceptable.} week 2
+\item Friday\nudge{A deadline officially on Friday means work submitted before we get to it on Monday is acceptable.} week 2
 \item Friday week 5
 \item Friday week 9
 \item Friday week 12

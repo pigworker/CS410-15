@@ -76,6 +76,9 @@
 
 %format ? = "\orange{?}"
 
+%format (HOLE n) = "\greenBG{\ensuremath{\{\;\}" n "}}"
+%format (HOLEC (c) n) = "\greenBG{\ensuremath{\{" c "\}" n "}}"
+
 \parskip 0.1in
 \parindent 0in
 
@@ -90,6 +93,8 @@
 \maketitle
 
 %include Introduction.lagda
+
+%include BlastOff.lagda
 
 \bibliographystyle{plainnat}
 \bibliography{CS410.bib}

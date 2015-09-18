@@ -206,6 +206,36 @@ Naughtily, we also keep the notes in the repository, so they have
 a steady url: \url{github.com/pigworker/CS410-15/raw/master/CS410-notes.pdf}.
 
 
+\section{Your Private Repo}
+
+You will need to keep your own private version of this repository,
+with your solutions. We find Bitbucket works well for this purpose:
+feel free to find another way to host your work, as long as we can
+access it. Below, we'll explain how to do it the Bitbucket way, once
+you have an account there.
+
+Suppose, as per instructions that you have already cloned the class
+repo from GitHub. Surf into \url{bitbucket.org/repo/import} and fill in
+`URL' with\\ \texttt{https://github.com/pigworker/CS410-15.git}, then click
+import. Bitbucket will set up your private copy. Visit it and copy the
+download link the site offers you.
+
+Now navigate into your local copy of the class repo. To tell it
+that it also has a Bitbucket version, issue the command
+
+{\tt git remote add private } \emph{(pasted download link)}
+
+and you should find that you can do
+\begin{itemize}
+\item {\tt git pull origin} ~ ~ ~
+  to pull from the class repo
+\item {\tt git pull private master} ~ ~ ~
+  to pull from your private repo
+\item {\tt git push private} ~ ~ ~
+  to push to your private repo
+\end{itemize}
+
+
 \section{What's in \texttt{Hello.agda}?}
 
 It starts with a \texttt{module} declaration, which should and does
@@ -269,9 +299,9 @@ be returned for every possible combination of inputs.
 \begin{verbatim}
 -- Now we can say how to add numbers.
 
-_+_ : Nat -> Nat -> Nat
-zero   +  n  = n
-suc m  +  n  = suc (m + n)
+_+N_ : Nat -> Nat -> Nat
+m +N zero   =  m
+m +N suc n  =  suc m +N n
 \end{verbatim}
 
 What's in a name? When a name includes \emph{underscores}, they stand
@@ -287,7 +317,7 @@ Meanwhile, because there are no values in \texttt{Nat} other than
 those built by \texttt{zero} and \texttt{suc}, we can be sure that
 the definition of \texttt{+} covers all the possibilities for the
 inputs. Moreover, or rather, lessunder, the recursive call in the
-\texttt{suc} case has as its first argument a smaller number than
+\texttt{suc} case has as its second argument a smaller number than
 in the pattern on the left hand side, so the recursive call is
 strictly simpler. Assuming (rightly, in Agda), that \emph{values}
 are not recursive structures, we must eventually reach \texttt{zero},
@@ -327,33 +357,3 @@ and unification. We'll see structures like monoids, functors, algebras
 and monads. The purpose is not just to teach a new language for
 instructing computers to do things, but to equip you with a deeper
 perception of structure and the articulacy to exploit that structure.
-
-Agda is a dependently typed language, meaning that types can mention
-values and thus describe their intended properties directly. If we are
-to be honest and ensure that we mean what we say, we had better be
-able to say more precisely what we do mean. This is not intended to be
-a course in dependently typed programming, although precision is
-habit-forming, so a certain amount of the serious business is
-inevitable. We'll also be in a position to state and prove that the
-programs we write are in various ways sensible. What would it take to
-convince you that the \texttt{+} operator we constructed above really
-does addition?
-
-I'm using Agda rather than Haskell for four reasons, two selfish, two
-less so.
-\begin{itemize}
-\item I am curious to see what happens.
-\item Using Agda brings my teaching a lot closer to my research and
-  obliges me to generate introductory material which will help
-  make this area more accessible. (The benefit for you is that I have
-  lots of motivation to write thorough notes.)
-\item Agda's honesty will help us see things as they really are: we cannot
-  push trouble under the rug without saying what sort of rug it is.
-  Other languages are much more casual about run time failure or other
-  forms of external interaction.
-\item Agda's editing environment gives strong and useful feedback during
-  the programming process, encouraging a type-centred method of development,
-  hopefully providing the cues to build good mental models of data and
-  computation. We do write programs with computers: we don't just type
-  them in.
-\end{itemize}

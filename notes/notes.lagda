@@ -69,7 +69,12 @@
 %format -> = "\blue{\rightarrow}"
 
 \newcommand{\nudge}[1]{\marginpar{\footnotesize #1}}
-\newtheorem{exe}{Exercise}[chapter]
+\newtheorem{puzz}{Puzzle}[chapter]
+\newcounter{exercise}
+\newtheorem{task}{Task}[exercise]
+\newcommand{\exercise}[1]{%
+  \stepcounter{exercise}%
+  \chapter{Exercise \arabic{exercise}\\#1}}
 
 %format rewrite = "\mathkw{rewrite}"
 %format constructor = "\mathkw{constructor}"
@@ -95,6 +100,8 @@
 %include Introduction.lagda
 
 %include BlastOff.lagda
+
+%include Ex1.lagda
 
 \bibliographystyle{plainnat}
 \bibliography{CS410.bib}

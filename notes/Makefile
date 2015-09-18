@@ -1,6 +1,6 @@
 default : notes.pdf
 
-notes.tex : notes.lagda Introduction.lagda BlastOff.lagda EmacsCheatSheet.lagda
+notes.tex : notes.lagda Introduction.lagda BlastOff.lagda Ex1.lagda EmacsCheatSheet.lagda
 	lhs2TeX --agda notes.lagda > notes.tex
 
 notes.aux : notes.tex

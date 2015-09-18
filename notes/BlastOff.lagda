@@ -1,8 +1,9 @@
 %format Zero = "\D{Zero}"
 %format One = "\D{One}"
 %format Two = "\D{Two}"
-%format == = "\D{\tt ==}}"
+%format == = "\D{\texttt{==}}"
 %format _==_ = "\_" == "\_"
+%format refl = "\C{refl}"
 %format Set = "\D{Set}"
 
 \chapter{|Two|, |One|, |Zero|, Blast Off!}
@@ -307,3 +308,60 @@ never need to: nobody can produce its input!
 You will find |Zero| useful in Exercise 1, to get out of tricky situations
 unscathed. You just say `This can't be happening to me!', and all of a sudden,
 it isn't.
+
+
+\section{Equality and unit testing}
+
+When you have two expressions, |a : X| and |b : X| in the same type,
+you can form the type |a == b| of \emph{evidence that |a| and |b| are
+the same}. We'll see its declaration later, but we can start using it
+before then. For the time being, the key is that |a == b| has \emph{at
+most one} constructor.
+
+If the typechecker can see why |a| and |b| are
+the same, then |refl| is the constructor.
+
+%format testIf = "\F{testIf}"
+\begin{code}
+testIf : if tt then ff else tt == ff
+testIf = refl
+\end{code}
+Computing by the rules we have given,
+the typechecker gets |ff| for both sides of the equation, so |refl| is
+accepted as a value of the given equality type---a \emph{proof} of the
+equation. This method allows us to embed unit tests directly into our
+code. The unit tests must pass for the code to typecheck.
+
+If the typechecker can see why
+|a| and |b| are definitely different, then there is definitely no
+constructor, so we can use `impossible'.
+%format trueIsn'tFalse = "\F{trueIsn'tFalse}"
+\begin{code}
+trueIsn'tFalse : tt == ff -> Zero
+trueIsn'tFalse ()
+\end{code}
+
+Of course, some equations might be too weird for the typechecker either
+to rule them in or to rule them out. Fortunately, we can write programs
+which compute evidence, just as we can write programs which compute
+values. E.g., we might like to check that
+\[
+  |if b then tt else ff == b|
+\]
+but the pattern matching rules we gave for |if_then_else_| don't make that
+so, just by computing. Correspondingly, we can try to implement this:
+%format ifTrueFalse = "\F{ifTrueFalse}"
+\begin{spec}
+ifTrueFalse : (b : Two) -> if b then tt else ff == b
+ifTrueFalse b = (HOLEC (refl) 0)
+\end{spec}
+but |refl| will not typecheck. Instead, however, we can use case analysis
+to split |b| into its two possibilities. Once we know |b|'s \emph{value}
+in each case, |if_then_else_| computes and we can complete the proof.
+\begin{code}
+ifTrueFalse : (b : Two) -> if b then tt else ff == b
+ifTrueFalse  tt  = refl
+ifTrueFalse  ff  = refl
+\end{code}
+
+Proving things and functional programming turn out to be remarkably similar!

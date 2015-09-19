@@ -67,6 +67,7 @@
 %subst varid a = "\V{" a "}"
 
 %format -> = "\blue{\rightarrow}"
+%format . = ".\!"
 
 \newcommand{\nudge}[1]{\marginpar{\footnotesize #1}}
 \newtheorem{puzz}{Puzzle}[chapter]

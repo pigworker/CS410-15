@@ -155,7 +155,7 @@ if ff then t else f = f
 That keystroke is a bit like `I feel lucky' on Google: it gives you the first well typed
 thing the system can find. Sadly, if you do the same thing in the top hole, you also get |f|.
 Fortunately, the {\tt C-c C-a} technology can be persuaded to work a little
-harder~\cite{DBLP:conf/types/LindbladB04}. Try
+harder~(\cite{DBLP:conf/types/LindbladB04}). Try
 typing {\tt -l}\nudge{{\tt l} for `list'} in the hole
 \begin{spec}
 if tt then t else f = (HOLEC (MINUSL) 0)
@@ -309,6 +309,12 @@ You will find |Zero| useful in Exercise 1, to get out of tricky situations
 unscathed. You just say `This can't be happening to me!', and all of a sudden,
 it isn't.
 
+\textbf{Rant} ~ If the typechecker can identify every expression in |One| because there's
+only one thing they can be, can it identify every expression in |Zero|? Well, not if |Zero|
+is treated like an ordinary |data| type. However, it is certainly possible to construct
+type systems with an empty type whose inhabiting expressions are all
+equal~(\cite{DBLP:conf/sfp/ChapmanAM05}). Sadly, Agda does not offer this feature.
+
 
 \section{Equality and unit testing}
 
@@ -365,3 +371,146 @@ ifTrueFalse  ff  = refl
 \end{code}
 
 Proving things and functional programming turn out to be remarkably similar!
+
+
+\section{|Two| |with| a view}
+
+%format not = "\F{not}"
+
+Let us finish this section by introducing a key Agda construct, `|with|', and
+its typical use in dependently typed programming---the construction of a
+`view'~(\cite{DBLP:journals/jfp/McBrideM04}).
+
+Two bits are either the \emph{same} or \emph{different}: sometimes, that
+distinction is more important than whether either is |tt| or |ff|.
+In more detail, given some |b : Two|, any other |x : Two| is either |b| or
+|not b|, where |not| is given as follows:
+\begin{code}
+not : Two -> Two
+not  tt  = ff
+not  ff  = tt
+\end{code}
+
+We could write an equality testing function of type |Two -> Two -> Two|
+and apply it to |b| and |x|, but all that does is compute a \emph{meaningless}
+bit. The output type |Two| doesn't say what the bit it about. \emph{A Boolean
+is a bit uninformative.}
+
+The `view' method gives us a way to generate an \emph{informative} bit, making
+essential use of the way types can talk about values. A type depending on
+|b| and |x| can contain values which teach us about |b| and |x|. Moreover, a
+`view' is a way of seeing: pattern matching will let us \emph{see} whether
+|x| is |tt| or |ff|, but we can similarly learn to \emph{see} whether |x| is
+|b| or |not b|. The first step is to say what we would like to be able to
+see.
+
+%format TwoTestable = "\D{TwoTestable}"
+%format same = "\C{same}"
+%format diff = "\C{diff}"
+\begin{code}
+data TwoTestable (b : Two) : (x : Two) -> Set where
+  same  : TwoTestable b b
+  diff  : TwoTestable b (not b)
+\end{code}
+
+We have some new syntax here. The declaration of |TwoTestable| has |(b : Two)|
+left of the |:|, which means |b| scopes over not only the type to the right
+of |:|, so
+\[
+  |TwoTestable : (b : Two)(x : Two) -> Set| \qquad \mbox{i.e.,} \qquad
+  |TwoTestable : Two -> Two -> Set|
+\]
+but also over the whole declaration, and you can see that |b| has been
+used in the types of |same| and |diff|. In effect, we are giving the constructors
+for |TwoTestable b|, and |b| must be the first argument of |TwoTestable| in each
+constructor's return type. Meanwhile, right of the |:|, we have not |Set| but |Two -> Set|,
+meaning that we are giving a collection of sets indexed over an element |x : Two|.
+The |x| doesn \emph{not} scope over the rest of the declaration, and we are free
+to choose specific values for it in the return type of each constructor. So what we
+are saying is that the constructor |same| is available when |x = b| and the constructor
+|diff| is available when |x = not b|. That is, if we have some value |v : TwoTestable b x|,
+we can find out whether |x| is |b| or |not b| by testing whether |v| is |same| or |diff|:
+we can implement a nonstandard pattern match by turning into a pattern match on something
+else, with a dependent type.
+
+%format twoTest = "\F{twoTest}"
+We have said how we wish to see |x|, but we have not yet shown that wish can come true.
+For that, we must prove that for every |b| and |x|, we can construct the value in
+|TwoTestable b x| that will allow us to see |x| in terms of |b|. We need a function
+\begin{spec}
+twoTest : (b x : Two) -> TwoTestable b x
+twoTest b x = (HOLEC (MINUSC) 0)
+\end{spec}
+but we can ask Agda to write it for us with |MINUS C| and {\tt C-c C-a}. There is only
+one way it can possibly work.
+\begin{code}
+twoTest : (b x : Two) -> TwoTestable b x
+twoTest  tt  tt  = same
+twoTest  tt  ff  = diff
+twoTest  ff  tt  = diff
+twoTest  ff  ff  = same
+\end{code}
+
+%format xor = "\F{xor}"
+Now that we've established our `view', how do we deploy it? Suppose, e.g., that
+we want to implement the |xor| function
+\begin{spec}
+xor : Two -> Two -> Two
+xor b c = (HOLE 0)
+\end{spec}
+by seeing whether |c| is the same as |b|. We need some extra information, namely
+the result of |twoTest b c|. Here's how to get it. Click just left of |=| and make
+this insertion and reload the file.
+\begin{spec}
+xor : Two -> Two -> Two
+xor b c with twoTest b c
+... | v = (HOLE 0)
+\end{spec}
+The |with| keyword introduces the extra information we want, and on the next line,
+|...| means `same left-hand side as before', but the vertical bar adds an extra
+column to the pattern match, with a new variable, |v|\nudge{Choosing the name |v|
+is not compulsory.} standing for the value of the
+extra information. 
+If you click in the hole and do {\tt C-c C-comma}, you will see that we know more than
+we did.
+\[\begin{array}{l@@{\;:\;}l}
+\multicolumn{2}{l}{\mbox{Goal: |Two|}}\\
+\hline
+|v| & |TwoTestable b c|\\
+|c| & |Two|\\
+|b| & |Two|\\
+\end{array}\]
+Now pattern match on |v|, using {\tt C-c C-c},
+\begin{spec}
+xor : Two -> Two -> Two
+xor b c with twoTest b c
+xor b .b        | same  = (HOLE 0)
+xor b .(not b)  | diff  = (HOLE 1)
+\end{spec}
+and you will see the whole picture. Not only do we get patterns of |same| and |diff|
+for |v|, but at the same time, we learn what |c| is. The \emph{dotted patterns}
+are a thing you don't get in Haskell: they say `I don't need to match here to tell
+you what this is!'. Operationally, the actual matching is done on the output of
+|twoTest b c|: learning whether |c| is |b| or |not b| is the bonus we paid for
+when we established the view. We can finish the job directly.
+\begin{code}
+xor : Two -> Two -> Two
+xor b c with twoTest b c
+xor b .b        | same  = ff
+xor b .(not b)  | diff  = tt
+\end{code}
+Look at the undotted parts of the pattern: they are just given by constructors and
+variables used at most once, like pattern matching in Haskell. We have defined
+functions and repeated uses of variables only under dot. Operationally, dotted patterns
+treated as `don't care' patterns, |_|. There is nothing new here about how pattern
+matching programs compute. What's new is what pattern matching can \emph{mean}.
+
+%format majority = "\F{majority}"
+\begin{puzz}[|majority|]
+Define the function which computes which value occurs the more often in three
+bits. Use one |with|, one pattern match, and only variables right of |=|.
+\begin{spec}
+majority : Two -> Two -> Two -> Two
+majority a b c = (HOLE 0)
+\end{spec}
+\end{puzz}

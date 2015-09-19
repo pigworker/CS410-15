@@ -4,7 +4,7 @@
 \section{Language and Tools}
 
 For the most part, we'll be using the experimental language,
-Agda~\cite{DBLP:conf/afp/Norell08}, which is a bit like Haskell
+Agda~(\cite{DBLP:conf/afp/Norell08}), which is a bit like Haskell
 (and implemented in Haskell), but has a more expressive type system
 and a rather fabulous environment for typed programming. Much of what
 we learn here can be ported back to Haskell with a bit of bodging and

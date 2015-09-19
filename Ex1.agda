@@ -229,7 +229,7 @@ testSubN3-2 = refl
 
 -- Uncomment this test and try to fill in the missing bits to make it work.
 {-+}
-testSubN3-3 : 37 -N3 42 -: {!!} == 37 -N3 42 -: {!!}
+testSubN3-3 : 37 -N3 42 -: {!!} == {!!}
 testSubN3-3 = refl
 {+-}
 -- HAHA! YA CANNAE! So comment it out again.
@@ -440,7 +440,7 @@ testTake3 = refl
 -- check you can't finish this
 {-+}
 testTake2  :  take 6 {!!} (0 :: 1 :: 2 :: 3 :: 4 :: [])
-              ==  take 6 {!!} (0 :: 1 :: 2 :: 3 :: 4 :: [])
+              ==  {!!}
 testTake2 = refl
 {+-}
 

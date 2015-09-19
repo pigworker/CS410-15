@@ -1,6 +1,12 @@
 \exercise{Numbers, Lists, Vectors}
 
-This exercise lives in the repository as file {\tt Ex1.agda}.
+\newcommand{\marky}[2]{\hfill\raisebox{0.2in}[0in][0in]{\textbf{(#1 mark#2)}}\vspace*{ -0.2in}}
+\newcommand{\onemark}{\marky{1}{}}
+\newcommand{\twomarks}{\marky{2}{s}}
+
+This is Conor telling the story.
+
+The exercise lives in the repository as file {\tt Ex1.agda}.
 
 %format Ex1 = "\mbox{\tt Ex1}"
 %format CS410-Prelude = "\mbox{\tt CS410-Prelude}"
@@ -8,7 +14,7 @@ This exercise lives in the repository as file {\tt Ex1.agda}.
 module Ex1 where
 \end{code}
 
-It imports |Two|, |One| and |Zero| from this file of stuff.
+It imports |Two|, |One|, |Zero| and |==| from this file of stuff.
 
 \begin{code}
 open import CS410-Prelude
@@ -33,7 +39,7 @@ postulate HOLE : Nat -> {X : Set} -> X
 \end{code}
 %endif
 
-\paragraph{Terminology}~ Set and ``type''. By ``type'', I mean anything you can put to
+\textbf{Terminology}~ Set and ``type''. By ``type'', I mean anything you can put to
 the right of : to classify the thing to the left of :, so |Set| is a
 type, as in |Nat : Set|, and |Nat| is a type, as in |zero : Nat|. Being a
 |Set| is \emph{one} way of being a type, but it is not the only way. In
@@ -45,7 +51,7 @@ mySet : Set
 mySet = Set  -- doesn't typecheck
 \end{spec}
 
-\paragraph{Spot the difference} ~ In Haskell, we'd write
+\textbf{Spot the difference} ~ In Haskell, we'd write
 \begin{verbatim}
 data Nat = Zero | Suc Nat
 \end{verbatim}
@@ -54,7 +60,7 @@ that \verb$Zero :: Nat$ and \verb$Suc :: Nat -> Nat$. Also, constructors live in
 separate namespace, with capital initial letters.
 
 In Agda, we say what type each thing belongs to. Everything lives in
-the same namespace. Capitalisation is only a social convention. I tend
+the same namespace. Capitalism is only a social convention. I tend
 to use capitals for typey things and lower case for valuey things.
 And we use just the one colon for typing, not two, because types are
 more important than lists.
@@ -71,19 +77,20 @@ _+N_ : Nat -> Nat -> Nat
 m +N n  = (HOLE 0)
 infixr 3 _+N_
 \end{code}
-\hfill\textbf{(1 mark)}
+\onemark
 \end{task}
 
-\paragraph{Notation} ~
+\textbf{Notation} ~
 A name |_+N_| with underscores in it serves double duty.
 \begin{enumerate}
-\item it is a perfectly sensible \emph{prefix} operator, so |_+N_ 2 2| makes sense
+\item it is a perfectly sensible \emph{prefix} operator, so |_+N_ 2 2| makes sense,
+  as does |_+N_ 2|, the function which adds two
 \item it describes the \emph{infix} usage of the operator, with the underscores
 showing where the arguments go, with \emph{extra spacing}, so the infix
 version of |_+N_ 2 2| is |2 +N 2|.
 \end{enumerate}
 
-When you think you're done, uncomment these unit tests and see if they
+When you think you're done, see if these unit tests
 typecheck.
 %format testPlus1 = "\F{testPlus1}"
 %format testPlus2 = "\F{testPlus2}"
@@ -109,398 +116,391 @@ _*N_ : Nat -> Nat -> Nat
 m *N n  =  (HOLE 1)
 infixr 4 _*N_
 \end{code}
-\hfill\textbf{(1 mark)}
+\onemark
 \end{task}
 
-%if False
--- unit tests
-{-+}
-testMult1 : 2 *N 2 == 4
-testMult1 = refl
-
-testMult2 : 0 *N 5 == 0
-testMult2 = refl
-
-testMult3 : 5 *N 0 == 0
-testMult3 = refl
-
-testMult4 : 1 *N 5 == 5
-testMult4 = refl
-
-testMult5 : 5 *N 1 == 5
-testMult5 = refl
-
-testMult6 : 2 *N 3 == 6
-testMult6 = refl
-{+-}
+Let me just list some unit tests. You know how to implement them.
+\[\begin{array}{c}
+|2 *N 2 == 4| \qquad
+|0 *N 5 == 0| \qquad
+|5 *N 0 == 0| \\
+|1 *N 5 == 5| \qquad
+|5 *N 1 == 5| \qquad
+|2 *N 3 == 6|
+\end{array}\]
 
 
-----------------------------------------------------------------------------
--- ??? 1.3 subtraction I (score: ? / 1)
---
--- Subtraction is a nuisance. How do you take a big number away from a
--- smaller one? Give the closest answer you can to the correct answer.
-----------------------------------------------------------------------------
-
+\begin{task}[subtraction I]
+Subtraction is a nuisance. How do you take a big number away from a
+smaller one? Give the closest answer you can to the correct answer.
+%format -N1 = "\F{{}-\!N}_{\F{1}}"
+%format _-N1_ = "\_" -N1 "\_"
+\begin{code}
 _-N1_ : Nat -> Nat -> Nat
-m -N1 n  =  {!!}
+m -N1 n  =  (HOLE 2)
+\end{code}
+\onemark
+\end{task}
 
--- unit tests
-{-+}
-testSubN1-1 : 4 -N1 2 == 2
-testSubN1-1 = refl
+\textbf{Unit tests}
+\(\qquad
+|4 -N1 2 == 2| \qquad |42 -N1 37 == 5|
+\)
 
-testSubN1-2 : 42 -N1 37 == 5
-testSubN1-2 = refl
-{+-}
 
-----------------------------------------------------------------------------
--- "Maybe" allows for the possibility of errors
-----------------------------------------------------------------------------
+%format Maybe = "\D{Maybe}"
+%format yes = "\C{yes}"
+%format no = "\C{no}"
+\section{|Maybe|}
 
+We can allow for the possibility of failure with the |Maybe| type constructor.
+
+\begin{code}
 data Maybe (X : Set) : Set where
   yes  : X -> Maybe X
   no   : Maybe X
+\end{code}
 
--- SPOT THE DIFFERENCE: in Haskell, these are "Just" and "Nothing"
+The idea is that |yes| represents computations which sucessfully deliver a value,
+while |no| represents failure. It's a more principled way of dealing with garbage
+input that just giving garbage output.
 
--- LATER, we'll revisit Maybe and define it in terms of more basic ideas.
+\textbf{Spot the difference} ~ In Haskell, |yes| is {\tt Just} and |no| is {\tt Nothing}.
+
+\textbf{Later} ~ we'll revisit |Maybe| and define it in terms of more basic ideas.
 
 
-----------------------------------------------------------------------------
--- ??? 1.4 subtraction II (score: ? / 2)
---
--- Implement subtraction with a type acknowledging that failure can happen.
--- You should use the "with" construct to process the recursive call.
-----------------------------------------------------------------------------
-
+\begin{task}[subtraction II]
+Implement subtraction with a type acknowledging that failure can happen.
+You can use the |with| construct to process the recursive call.
+%format -N2 = "\F{{}-\!N}_{\F{2}}"
+%format _-N2_ = "\_" -N2 "\_"
+\begin{code}
 _-N2_ : Nat -> Nat -> Maybe Nat
-m -N2 n  =  {!!}
+m -N2 n  =  (HOLE 3)
+\end{code}
+\twomarks
+\end{task}
 
--- unit tests
-{-+}
-testSubN2-1 : 4 -N2 2 == yes 2
-testSubN2-1 = refl
-
-testSubN2-2 : 42 -N2 37 == yes 5
-testSubN2-2 = refl
-
-testSubN2-3 : 37 -N2 42 == no
-testSubN2-3 = refl
-{+-}
+\textbf{Unit tests}
+\(\qquad
+|4 -N2 2 == yes 2|    \qquad
+|42 -N2 37 == yes 5|  \qquad
+|37 -N2 42 == no|
+\)
 
 
-----------------------------------------------------------------------------
--- _N>=_ as a relation, not a test
-----------------------------------------------------------------------------
 
-_N>=_ : Nat -> Nat -> Set      -- not Two (a.k.a. Bool), but Set
-                               -- the set of "ways it can be true"
-                               -- i.e., what counts as EVIDENCE
+%format N>= = "\F{N\!>\!=}"
+%format _N>=_ = "\_" N>= "\_"
+\section{|N>=| as a relation, not a test}
+
+We can define a \emph{type} |m N>= n| which answers the question
+`In what way can |m| be greater than or equal to |n|?'. That is,
+we are not saying how to \emph{test} the inequality, just what we
+would accept as \emph{evidence} for the inequality. Evidence of
+inequality (however obtained) can then be used as a guarantee that
+subtraction will be error-free.
+
+\begin{code}
+_N>=_ : Nat -> Nat -> Set      -- not |Two|, but |Set|
+                               -- the set of `ways it can be true'
+                               -- i.e., what counts as \emph{evidence}
 m      N>=  zero   =  One      -- anything is at least zero in a boring way
 zero   N>=  suc n  =  Zero     -- no way is zero bigger than a successor
-suc m  N>=  suc n  =  m N>= n  -- the way to compare successors
+suc m  N>=  suc n  =  m N>= n  -- successors compare as their predecessors
+\end{code}
 
--- What's funny is that it's just an ordinary program, computing by
--- pattern matching and recursion.
+What's funny is that it's just an ordinary program, computing by
+pattern matching and recursion.
 
-
-----------------------------------------------------------------------------
--- ??? 1.5 subtraction III (score: ? / 1)
---
--- Implement subtraction with explicit evidence that the inputs are
--- amenable to subtraction.
-----------------------------------------------------------------------------
-
+\begin{task}[subtraction III]
+Implement subtraction with explicit evidence that the inputs are
+amenable to subtraction. Hint: you will need the `impossible' pattern,
+written |()|.
+%format -: = "\F{{}-\!:}"
+%format -N3 = "\F{{}-\!N}_{\F{3}}"
+%format _-N3_-:_ = "\_" -N3 "\_" =: "\_"
+\begin{code}
 _-N3_-:_ : (m : Nat) -> (n : Nat) -> m N>= n -> Nat
-m -N3 n -: p  = {!!}
+m -N3 n -: p  = (HOLE 4)
+\end{code}
+\onemark
+\end{task}
 
--- DON'T PANIC about the syntax (m : Nat) -> (n : Nat) ->
--- The type of both those arguments is Nat. However, when we write the
--- type this way, we can name those arguments for use further along in
--- the type, i.e. in the third argument. That's an example of a *dependent*
--- type. In fact, the regular syntax Nat -> is short for (_ : Nat) -> where
--- we don't bother naming the thing.
+\textbf{Reminder} ~ about the syntax |(m : Nat) -> (n : Nat) -> ...|
+The type of both those arguments is |Nat|. However, when we write the
+type this way, we can name those arguments for use further along in
+the type, i.e. in the third argument. That's your first exercise with a \emph{dependent}
+type. In fact, the regular syntax |Nat ->| is short for |(_ : Nat) ->| where
+we don't bother naming the thing.
 
--- NOTICE that we can have fancy multi-place operators.
+\textbf{Notice} ~ that we can have fancy multi-place operators.
 
--- HINT: you will need to learn about the "absurd" pattern, written ().
+\textbf{Unit tests}
+\(\qquad
+|4 -N3 2 -: <> == 2| \qquad
+|42 -N3 37 -: <> == 5|
+\)
 
--- unit tests
-{-+}
-testSubN3-1 : 4 -N3 2 -: <> == 2
-testSubN3-1 = refl
 
-testSubN3-2 : 42 -N3 37 -: <> == 5
-testSubN3-2 = refl
-{+-}
-
--- Uncomment this test and try to fill in the missing bits to make it work.
-{-+}
-testSubN3-3 : 37 -N3 42 -: {!!} == 37 -N3 42 -: {!!}
+\textbf{Fool's errand} ~ Fill in the missing bits to make this work:
+%format testSubN3-3 = "\F{testSubN3-3}"
+\begin{spec}
+testSubN3-3 : 37 -N3 42 -: ? == ?
 testSubN3-3 = refl
-{+-}
--- HAHA! YA CANNAE! So comment it out again.
+\end{spec}
+Haha! Ya cannae! So comment it out.
 
--- EXTRA! You can
--- write     (m : Nat) -> (n : Nat) ->
--- as        (m : Nat)(n : Nat) ->        -- omitting all but the last ->
--- or as     (m n : Nat) ->               -- two named args sharing a type.
+\textbf{Reminder} ~ You can\\
+\begin{tabular}{@@{}ll@@{~ ~ ~}l}
+write   &  |(m : Nat) -> (n : Nat) ->| \\
+as      &  |(m : Nat)(n : Nat) ->|  &  omitting all but the last |->| \\
+or as   &  |(m n : Nat) ->|         &  two named args sharing a type.
+\end{tabular}
 
--- NOTICE how the defining equations for _N>=_ play a crucial role in the
--- typechecking of the above.
+\textbf{Notice} ~ how the defining equations for |N>=| play a crucial role in the
+typechecking of the above.
 
--- NOTICE that attempts II and III take contrasting approaches to the
--- problem with I. II broadens the output to allow failure. III narrows the
--- input to ensure success.
+\textbf{Notice} ~ that attempts II and III take contrasting approaches to the
+problem with I. II broadens the output to allow failure. III narrows the
+input to ensure success.
 
--- LATER, we'll see how to make the proof-plumbing less explicit
+\textbf{Later} ~ we'll see how to make the proof-plumbing less explicit
 
--- SUSPICIOUS: why aren't they asking us to define division?
+\textbf{Suspicion} ~ Why isn't he asking us to define division?
 
+%format List = "\D{List}"
+%format [] = "\C{[]}"
+%format :: = "\C{::}"
+%format _::_ = "\_" :: "\_"
 
-----------------------------------------------------------------------------
--- List -- the thing that was [ .. ] in Haskell
-----------------------------------------------------------------------------
+\section{|List|}
 
-data List (X : Set) : Set where  -- X scopes over the whole declaration...
+In Haskell, we had list types type {\tt [a]}. In Agda, we can have
+
+\begin{code}
+data List (X : Set) : Set where  -- |X| scopes over the whole declaration...
   []    : List X                 -- ...so you can use it here...
   _::_  : X -> List X -> List X  -- ...and here.
 infixr 3 _::_
+\end{code}
 
-
-----------------------------------------------------------------------------
--- ??? 1.6 concatenation (score: ? / 1)
-----------------------------------------------------------------------------
-
+\begin{task}[concatenation]
+Implement concatenation for |List|.
+%format +L = "\F{+L}"
+%format _+L_ = "\_" +L "\_"
+\begin{code}
 _+L_ : {X : Set} -> List X -> List X -> List X
-xs +L ys  =  {!!}
+xs +L ys  =  (HOLE 5)
 infixr 3 _+L_
+\end{code}
+\onemark
+\end{task}
 
--- DON'T PANIC about the "curly braces" syntax. It's very similar to the
--- (m : Nat) -> syntax we saw, above. It describes an argument by giving
--- its type, Set, and a name X to allow dependency. All the braces do is
--- set the default usage convention that X is by default INVISIBLE. Any
--- time you use the function _+L_, Agda will try to figure out what is
--- the appropriate thing to put for the invisible argument, which is the
--- element type for the lists. She will usually succeed, because the types
--- of the lists you feed in will be a dead giveaway.
+\textbf{Reminder} ~ about the `curly braces' syntax. It's very similar to the
+|(m : Nat) ->| syntax we saw, above. It describes an argument by giving
+its type, |Set|, and a name |X| to allow dependency. All the braces do is
+set the default usage convention that |X| is by default \emph{invisible}. Any
+time you use the function |+L|, Agda will try to figure out what is
+the appropriate thing to put for the invisible argument, which is the
+element type for the lists. She will usually succeed, because the types
+of the lists you feed in will be a dead giveaway.
 
--- SPOT THE DIFFERENCE: back when you learned Haskell, you learned about
--- TWO ideas, FUNCTIONS and POLYMORPHISM. Now you can see that there was
--- only ONE IDEA, after all. This sort of collapse will keep happening.
--- The world is simpler, made of a smaller number of better articulated
--- parts.
+\textbf{Spot the difference} ~ back when you learned Haskell, you learned about
+\emph{two} ideas, \emph{functions} and \emph{polymorphism}. Now you can see that there was
+only \emph{one idea}, after all. This sort of collapse will keep happening.
+The world is simpler, made of a smaller number of better articulated
+parts.
 
--- unit test
-{-+}
-testConcL  :   (0 :: 1 :: 2 :: []) +L (3 :: 4 :: [])
-           ==   0 :: 1 :: 2 ::         3 :: 4 :: []
-testConcL = refl
-{+-}
+\textbf{Unit test} ~
+\(\quad
+|(0 :: 1 :: 2 :: []) +L (3 :: 4 :: [])  ==   0 :: 1 :: 2 :: 3 :: 4 :: []|
+\)
 
 
-----------------------------------------------------------------------------
--- ??? 1.7 take I (score: ? / 1)
---
--- Given a number, n, and a list, xs, compute the first n elements of xs.
--- Of course, there will be a tiny little problem if the caller asks for
--- more elements than are available, hence the name of the function.
--- You must ensure that the list returned is indeed a prefix of the list
--- supplied, and that it has the requested length if possible, and at most
--- that length if not.
-----------------------------------------------------------------------------
-
+\begin{task}[take I]
+Given a number, |n|, and a list, |xs|, compute the first n elements of xs.
+Of course, there will be a tiny little problem if the caller asks for
+more elements than are available, hence the name of the function.
+You must ensure that the list returned is indeed a prefix of the list
+supplied, and that it has the requested length if possible, and at most
+that length if not.
+%format mis-take = "\F{mis\!-\!take}"
+\begin{code}
 mis-take : {X : Set} -> Nat -> List X -> List X
-mis-take n xs  =  {!!}
-
--- unit test
-{-+}
-testMisTake  :   mis-take 3 (0 :: 1 :: 2 :: 3 :: 4 :: [])
-             ==              0 :: 1 :: 2 :: []
-testMisTake = refl
-{+-}
+mis-take n xs  =  (HOLE 6)
+\end{code}
+\onemark
+\end{task}
 
 
+\textbf{Unit test} ~
+\(\quad
+|mis-take 3 (0 :: 1 :: 2 :: 3 :: 4 :: []) == 0 :: 1 :: 2 :: []|
+\)
 
-----------------------------------------------------------------------------
--- ??? 1.8 take II (score: ? / 1)
---
--- Fix mis-take by acknowledging the possibility of error. Ensure that your
--- function returns "yes" with a list of exactly the right length if
--- possible, or says "no".
-----------------------------------------------------------------------------
 
+
+
+\begin{task}[take II]
+Fix mis-take by acknowledging the possibility of error. Ensure that your
+function returns |yes| with a list of exactly the right length if
+possible, or says |no|.
+%format may-take = "\F{may\!-\!take}"
+\begin{code}
 may-take : {X : Set} -> Nat -> List X -> Maybe (List X)
-may-take n xs  =  {!!}
+may-take n xs  =  (HOLE 7)
+\end{code}
+\onemark
+\end{task}
 
--- HINT: it's really rather a lot like _-N2_
+\textbf{Hint} ~ it's really rather a lot like |-N2|.
 
--- unit test
-{-+}
-testMayTake1  :   may-take 3 (0 :: 1 :: 2 :: 3 :: 4 :: [])
-              ==         yes (0 :: 1 :: 2 :: [])
-testMayTake1 = refl
-
-testMayTake2  :   may-take 6 (0 :: 1 :: 2 :: 3 :: 4 :: [])
-              ==  no
-testMayTake2 = refl
-
-testMayTake3  :   may-take 5 (0 :: 1 :: 2 :: 3 :: 4 :: [])
-              ==         yes (0 :: 1 :: 2 :: 3 :: 4 :: [])
-testMayTake3 = refl
-{+-}
+\begin{tabular}{@@{}l@@{$\qquad$}l}
+\textbf{Unit tests} &|may-take 3 (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  yes (0 :: 1 :: 2 :: [])|\\
+&|may-take 6 (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  no|\\
+&|may-take 5 (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  yes (0 :: 1 :: 2 :: 3 :: 4 :: [])|
+\end{tabular}
 
 
-----------------------------------------------------------------------------
--- ??? 1.9 length (score: ? / 1)
-----------------------------------------------------------------------------
-
--- Show how to compute the length of a list.
-
+%format length = "\F{length}"
+\begin{task}[|length|]
+Show how to compute the length of a list.
+\begin{code}
 length : {X : Set} -> List X -> Nat
-length xs = {!!}
+length xs = (HOLE 8)
+\end{code}
+\onemark
+\end{task}
 
--- unit test
-{-+}
-testLength  :  length (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  5
-testLength  =  refl
-{+-}
+\textbf{Unit test} ~ ~ |length (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  5|
+
+\textbf{Head scratch} ~ What information is in a list that isn't in its length?
+
+%format Vec = "\D{Vec}"
+\section{|Vec|tors -- |List|s indexed by length}
+
+We seem to be troubled by things fouling up when lists have the wrong
+length. Here's a way to make list-like structures whose types let us
+keep tabs on length: the `vectors'.
+
+\begin{code}
+data Vec (X : Set) : (n : Nat) -> Set where -- |n|'s not in scope after |where|
+  []    : Vec X zero                                  -- it's |zero| here,...
+  _::_  : {n : Nat} -> X -> Vec X n -> Vec X (suc n)  -- ...|suc|cessor, there
+\end{code}
+
+\textbf{Don't panic} ~
+|Vec X| is not a |Set|, but rather an \emph{indexed family} of sets. For each |n : Nat|,
+|Vec X n| is a |Set|. The index, |n|, is the length. The constructors are
+just like those of |List|, except that their types also tell the truth
+about length, via the index.
+
+\textbf{Notice} ~ that when we write a `cons', |x :: xs|, the length of the tail, |xs|,
+is an invisible argument.
+
+\textbf{Don't panic} ~ about the reuse of constructor names. We're usually starting
+with types and working towards code, so it is almost always clear which
+type's constructors we mean.
+
+\textbf{Suspicion} ~ We declared |List|, then wrote |length|, then invented |Vec|.
+Perhaps there is some way to say |Vec| is |List| indexed by |length| and
+have it invented for us.
 
 
-----------------------------------------------------------------------------
--- "Vectors" -- Lists indexed by length
-----------------------------------------------------------------------------
-
--- We seem to be troubled by things fouling up when lists have the wrong
--- length. Here's a way to make list-like structures whose types let us
--- keep tabs on length: the "vectors".
-
-data Vec (X : Set) : (n : Nat) -> Set where -- n's not in scope after "where"
-  []    : Vec X zero                                  -- it's zero here,...
-  _::_  : {n : Nat} -> X -> Vec X n -> Vec X (suc n)  -- ...successor, there
-
--- DON'T PANIC
--- Vec X is not a Set, but rather an INDEXED FAMILY of sets. For each n in
--- Nat, Vec X n is a Set. The index, n, is the length. The constructors are
--- just like those of List, except that their types also tell the truth
--- about length, via the index.
-
--- NOTICE that when we write a "cons", x :: xs, the length of the tail, xs,
--- is an invisible argument.
-
--- DON'T PANIC about the reuse of constructor names. We're usually starting
--- with types and working towards code, so it is almost always clear which
--- type's constructors we mean.
-
--- SUSPICION: we declared List, then wrote length, then invented Vec.
--- Perhaps there is some way to say "Vec is List indexed by length" and
--- have it invented for us.
-
-
-----------------------------------------------------------------------------
--- ??? 1.10 concatenation (score: ? / 1)
-----------------------------------------------------------------------------
-
--- When we concatenate vectors, we add their lengths.
-
+\begin{task}[concatenation]
+When we concatenate vectors, we add their lengths.
+%format +V = "\F{+V}"
+%format _+V_ = "\_" +V "\_"
+\begin{code}
 _+V_ : {X : Set}{m n : Nat} -> Vec X m -> Vec X n -> Vec X (m +N n)
-xs +V ys  = {!!}
+xs +V ys  = (HOLE 9)
 infixr 3 _+V_
+\end{code}
+\onemark
+\end{task}
 
--- NOTICE that even though m and n are numbers, not types, they can
--- still be invisible.
+\textbf{Notice} ~  that even though |m| and |n| are numbers, not types, they can
+still be invisible.
 
--- DON'T PANIC if this doesn't work out to be just as easy (or even easier)
--- than for lists. You may need to tinker with your definition of _+N_ to
--- make _+V_ typecheck smoothly. That's because the defining equations for
--- _+N_ are all the typechecker has to go on when seeing that your code
--- here fits together properly.
+\textbf{Don't panic} ~ if this doesn't work out to be just as easy (or even easier)
+than for lists. You may need to tinker with your definition of |+N| to
+make |+V| typecheck smoothly. That's because the defining equations for
+|+N| are all the typechecker has to go on when seeing that your code
+here fits together properly.
 
--- unit test
-{-+}
-testConcV  :   (0 :: 1 :: 2 :: []) +V (3 :: 4 :: [])
-           ==   0 :: 1 :: 2 ::         3 :: 4 :: []
-testConcV = refl
-{+-}
+\textbf{Comedy} ~ See how much of this program you can persuade Agda to write
+for you, using the {\tt C-c C-a} variations.
 
+\textbf{Unit test} ~
+\(\quad
+|(0 :: 1 :: 2 :: []) +V (3 :: 4 :: [])  ==   0 :: 1 :: 2 :: 3 :: 4 :: []|
+\)
 
-----------------------------------------------------------------------------
--- ??? 1.11 take (score: ? / 2)
-----------------------------------------------------------------------------
-
--- Now we know the lengths, we can give a PRECONDITION for taking.
-
+%format take = "\F{take}"
+\begin{task}[|take|]
+Now we know the lengths, we can give a \emph{precondition} for taking.
+\begin{code}
 take : {X : Set}{m : Nat}(n : Nat) -> m N>= n -> Vec X m -> Vec X n
-take n p xs = {!!}
+take n p xs = (HOLE 10)
+\end{code}
+\twomarks
+\end{task}
 
--- unit test
-{-+}
-testTake1  :  take 3 <> (0 :: 1 :: 2 :: 3 :: 4 :: [])
-              ==         0 :: 1 :: 2 :: []
-testTake1 = refl
+\begin{tabular}{@@{}l@@{$\qquad$}l}
+\textbf{Unit tests} &|take 3 <> (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  0 :: 1 :: 2 :: []|\\
+&|take <> 5 (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  0 :: 1 :: 2 :: 3 :: 4 :: []|
+\end{tabular}
 
-testTake3  :  take 5 <> (0 :: 1 :: 2 :: 3 :: 4 :: [])
-              ==         0 :: 1 :: 2 :: 3 :: 4 :: []
-testTake3 = refl
-{+-}
-
--- check you can't finish this
-{-+}
-testTake2  :  take 6 {!!} (0 :: 1 :: 2 :: 3 :: 4 :: [])
-              ==  take 6 {!!} (0 :: 1 :: 2 :: 3 :: 4 :: [])
-testTake2 = refl
-{+-}
+\textbf{Fool's errand} ~ ~ |take 6 ? (0 :: 1 :: 2 :: 3 :: 4 :: []) ==  ?|
 
 
-----------------------------------------------------------------------------
--- Chopping: one last wild weird new thing
-----------------------------------------------------------------------------
+\section{Chopping}
 
--- Here's a thing you'd struggle to do in Haskell. It's really about seeing.
--- A vector of length m +N n is "Choppable" if you can show how it is given
--- by concatenating a vector of length m and a vector of length n.
-
+%format Choppable = "\D{Choppable}"
+Here's a thing you'd struggle to do in Haskell. It's really about seeing.
+A vector of length |m +N n| is |Choppable| if you can show how it is given
+by concatenating a vector of length |m| and a vector of length |n|.
+%format chopTo = "\C{chopTo}"
+\begin{code}
 data Choppable {X : Set}(m n : Nat) : Vec X (m +N n) -> Set where
   chopTo : (xs : Vec X m)(ys : Vec X n) -> Choppable m n (xs +V ys)
+\end{code}
 
-----------------------------------------------------------------------------
--- ??? 1.12 chop (score: ? / 2)
-----------------------------------------------------------------------------
-
+%format chop = "\F{chop}"
+\begin{task}[|chop|]
+Show that vectors are |Choppable|.
+\begin{code}
 chop : {X : Set}(m n : Nat)(xs : Vec X (m +N n)) -> Choppable m n xs
-chop m n xs = {!!}
+chop m n xs = (HOLE 11)
+\end{code}
+\twomarks
+\end{task}
 
--- DON'T PANIC if you can't pattern match on the vector right away, because
--- the fact is that without looking at WHERE TO CHOP, you don't know if you
--- need to.
+\textbf{Don't panic} ~ if you can't pattern match on the vector right away, because
+the fact is that without looking at \emph{where to chop}, you don't know if you
+need to.
 
--- HINT You can access vectors only from the "left end", which is a big
--- clue about which number you should inspect.
+\textbf{Hint} ~  You can access vectors only from the `left end', which is a big
+clue about which number you should inspect.
 
--- HINT Much like in -N2 and may-take, you will probably benefit from using
--- the "with" feature to allow you to match on the outcome of a recursive
--- call.
+\textbf{Hint} ~  Much like in |-N2| and |may-take|, you will probably benefit from using
+the |with| feature to allow you to match on the outcome of a recursive
+call.
 
--- DON'T PANIC if dotty things appear spontaneously in your patterns. That's
--- knowledge for free: the pattern checker is saying "you don't need to ask,
--- because I know that the only thing which goes here is such-and-such".
+\textbf{Remember} ~  if dotty things appear spontaneously in your patterns. That's
+knowledge for free: the pattern checker is saying `you don't need to ask,
+because I know that the only thing which goes here is such-and-such'.
 
--- unit test
+\textbf{Unit test} ~ ~ |chop 3 2 (0 :: 1 :: 2 :: 3 :: 4 :: []) ==  chopTo (0 :: 1 :: 2 :: []) (3 :: 4 :: [])|
 
-{-+}
-testChop  :   chop 3 2 (0 :: 1 :: 2 :: 3 :: 4 :: [])
-          ==  chopTo (0 :: 1 :: 2 :: []) (3 :: 4 :: [])
-testChop = refl
-{+-}
+\textbf{Suspicion} ~ Unit tests may, in this case, be a little beside the point.
 
--- SUSPICION: unit tests may, in this case, be a little beside the point
+\textbf{Terminology} ~ we call this method `constructing a view' of vectors. The
+|data| type Choppable explains how we would like to be able to look at
+vectors. The chop function \emph{proves} that we always can. We get for free
+that we can look at vectors as being made by |[]| and |::|, but now we
+can \emph{program} new ways of looking: vectors as made by |+V|.
 
--- TERMINOLOGY: we call this method "constructing a view" of vectors. The
--- datatype Choppable explains how we would like to be able to look at
--- vectors. The chop function *proves* that we always can. We get for free
--- that we can look at vectors as being made by [] and _::_, but now we
--- can PROGRAM new ways of looking: vectors as made by _+V_.
-
--- Welcome to the new programming.
-%endif
+Welcome to the new programming.

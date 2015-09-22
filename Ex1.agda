@@ -71,7 +71,8 @@ mySet = Set
 ----------------------------------------------------------------------------
 
 _+N_ : Nat -> Nat -> Nat
-m +N n  =  {!!}
+m +N zero = zero
+m +N suc n = {!!}
 infixr 3 _+N_
 
 -- NOTATION: a name _+N_ with underscores in it serves double duty.
@@ -160,10 +161,9 @@ data Maybe (X : Set) : Set where
 
 
 ----------------------------------------------------------------------------
--- ??? 1.4 subtraction II (score: ? / 2)
+-- ??? 1.4 subtraction II (score: ? / 1)
 --
 -- Implement subtraction with a type acknowledging that failure can happen.
--- You should use the "with" construct to process the recursive call.
 ----------------------------------------------------------------------------
 
 _-N2_ : Nat -> Nat -> Maybe Nat
@@ -316,17 +316,16 @@ testMisTake = refl
 
 
 ----------------------------------------------------------------------------
--- ??? 1.8 take II (score: ? / 1)
+-- ??? 1.8 take II (score: ? / 2)
 --
 -- Fix mis-take by acknowledging the possibility of error. Ensure that your
 -- function returns "yes" with a list of exactly the right length if
--- possible, or says "no".
+-- possible, or says "no". You may need to use the "with" construct to
+-- inspect the result of the recursive call.
 ----------------------------------------------------------------------------
 
 may-take : {X : Set} -> Nat -> List X -> Maybe (List X)
 may-take n xs  =  {!!}
-
--- HINT: it's really rather a lot like _-N2_
 
 -- unit test
 {-+}

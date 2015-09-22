@@ -8,11 +8,13 @@ data Nat : Set where
   zero  :  Nat
   suc   :  Nat -> Nat
 
+-- data Nat = Zero | Suc Nat -- in Haskell
+
 -- Now we can say how to add numbers.
 
 _+N_ : Nat -> Nat -> Nat
-m +N zero   =  m
-m +N suc n  =  suc m +N n
+m +N zero = m
+m +N suc n = suc (m +N n)
 
 -- Now we can try adding some numbers.
 

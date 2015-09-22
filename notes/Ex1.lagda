@@ -90,6 +90,10 @@ showing where the arguments go, with \emph{extra spacing}, so the infix
 version of |_+N_ 2 2| is |2 +N 2|.
 \end{enumerate}
 
+\textbf{Notation} ~ The |infixr| declaration adds more detail to the infix usage of
+|+N|. Specifically, it gives |+N| a \emph{precedence} level of 3 and ensures that
+it associates to the right, so that the parser reads |1 +N 2 +N 3| as |1 +N (2 +N 3)|.
+
 When you think you're done, see if these unit tests
 typecheck.
 %format testPlus1 = "\F{testPlus1}"
@@ -172,14 +176,13 @@ input that just giving garbage output.
 
 \begin{task}[subtraction II]
 Implement subtraction with a type acknowledging that failure can happen.
-You can use the |with| construct to process the recursive call.
 %format -N2 = "\F{{}-\!N}_{\F{2}}"
 %format _-N2_ = "\_" -N2 "\_"
 \begin{code}
 _-N2_ : Nat -> Nat -> Maybe Nat
 m -N2 n  =  (HOLE 3)
 \end{code}
-\twomarks
+\onemark
 \end{task}
 
 \textbf{Unit tests}
@@ -191,7 +194,7 @@ m -N2 n  =  (HOLE 3)
 
 
 
-%format N>= = "\F{N\!>\!=}"
+%format N>= = "\F{N\!\!>\!=}"
 %format _N>=_ = "\_" N>= "\_"
 \section{|N>=| as a relation, not a test}
 
@@ -216,8 +219,8 @@ pattern matching and recursion.
 
 \begin{task}[subtraction III]
 Implement subtraction with explicit evidence that the inputs are
-amenable to subtraction. Hint: you will need the `impossible' pattern,
-written |()|.
+amenable to subtraction. You should use the `impossible' pattern,
+written |()|, to dismiss the case which should not be permitted.
 %format -: = "\F{{}-\!:}"
 %format -N3 = "\F{{}-\!N}_{\F{3}}"
 %format _-N3_-:_ = "\_" -N3 "\_" =: "\_"
@@ -346,16 +349,15 @@ mis-take n xs  =  (HOLE 6)
 \begin{task}[take II]
 Fix mis-take by acknowledging the possibility of error. Ensure that your
 function returns |yes| with a list of exactly the right length if
-possible, or says |no|.
+possible, or says |no|. You may need the |with| construct to inspect the
+result of the recursive call.
 %format may-take = "\F{may\!-\!take}"
 \begin{code}
 may-take : {X : Set} -> Nat -> List X -> Maybe (List X)
 may-take n xs  =  (HOLE 7)
 \end{code}
-\onemark
+\twomarks
 \end{task}
-
-\textbf{Hint} ~ it's really rather a lot like |-N2|.
 
 \begin{tabular}{@@{}l@@{$\qquad$}l}
 \textbf{Unit tests} &|may-take 3 (0 :: 1 :: 2 :: 3 :: 4 :: [])  ==  yes (0 :: 1 :: 2 :: [])|\\

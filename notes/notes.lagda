@@ -104,6 +104,8 @@
 
 %include Ex1.lagda
 
+%include CatFunc.lagda
+
 \bibliographystyle{plainnat}
 \bibliography{CS410.bib}
 

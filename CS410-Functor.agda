@@ -39,3 +39,11 @@ App2Fun {T} app = record {
     lem {X} f g x
       rewrite homomorphism (_o_ f) g | homomorphism (_o_ {X = X}) f =
         composition (pure f) (pure g) x
+
+record Traversable (T : Set -> Set) : Set1 where
+  field
+    -- OPERATIONS ----------------------------------------------
+    traverse  : forall {F} -> Applicative F ->
+                forall {A B} -> (A -> F B) -> T A -> F (T B)
+    -- LAWS ----------------------------------------------------
+    -- maybe later

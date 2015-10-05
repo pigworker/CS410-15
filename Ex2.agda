@@ -94,3 +94,106 @@ VecApp n = record
   } where
   -- lemmas go here
 
+
+----------------------------------------------------------------------------
+-- ??? 2.6 vectors are traversable                            (score: ? / 1)
+----------------------------------------------------------------------------
+
+-- show that vectors are traversable; make sure your traverse function
+-- acts on the elements of the input once each, left-to-right
+
+VecTrav : forall n -> Traversable \X -> Vec X n
+VecTrav = {!!}
+
+
+----------------------------------------------------------------------------
+-- ??? 2.7 monoids make constant applicatives                 (score: ? / 1)
+----------------------------------------------------------------------------
+
+-- Show that every monoid gives rise to a degenerate applicative functor
+
+MonCon : forall {X} -> Monoid X -> Applicative \_ -> X
+MonCon M = record
+             { pure          = {!!}
+             ; _<*>_         = op
+             ; identity      = {!!}
+             ; composition   = {!!}
+             ; homomorphism  = {!!}
+             ; interchange   = {!!}
+             } where open Monoid M
+
+
+----------------------------------------------------------------------------
+-- ??? 2.8 vector combine                                     (score: ? / 1)
+----------------------------------------------------------------------------
+
+-- Using your answers to 2.6 and 2.7, rather than any new vector recursion,
+-- show how to compute the result of combining all the elements of a vector
+-- when they belong to some monoid.
+
+vcombine : forall {X} -> Monoid X ->
+           forall {n} -> Vec X n -> X
+vcombine M = {!!}
+
+
+----------------------------------------------------------------------------
+-- ??? 2.9 scalar product                                     (score: ? / 1)
+----------------------------------------------------------------------------
+
+-- Show how to compute the scalar ("dot") product of two vectors of numbers.
+-- (Multiply elements in corresponding positions; compute total of products.)
+-- HINT: think zippily, then combine
+
+vdot : forall {n} -> Vec Nat n -> Vec Nat n -> Nat
+vdot xs ys = {!!}
+
+
+----------------------------------------------------------------------------
+-- MATRICES
+----------------------------------------------------------------------------
+
+-- let's say that a w by h matrix is a column h high of rows w wide
+
+Matrix : Set -> Nat * Nat -> Set
+Matrix X (w , h) = Vec (Vec X w) h
+
+
+----------------------------------------------------------------------------
+-- ??? 2.11 identity matrix                                   (score: ? / 1)
+----------------------------------------------------------------------------
+
+-- show how to construct the identity matrix of a given size, with
+-- 1 on the main diagonal and 0 everywhere else, e.g,
+-- (1 :: 0 :: 0 :: []) ::
+-- (0 :: 1 :: 0 :: []) ::
+-- (0 :: 0 :: 1 :: []) ::
+-- []
+
+idMat : forall {n} -> Matrix Nat (n , n)
+idMat = {!!}
+
+-- HINT: you may need to do recursion on the side, but then you
+-- can make good use of vec and vapp
+
+
+----------------------------------------------------------------------------
+-- ??? 2.10 transposition                                     (score: ? / 1)
+----------------------------------------------------------------------------
+
+-- show how to transpose matrices
+-- HINT: use traverse, and it's a one-liner
+
+transpose : forall {X m n} -> Matrix X (m , n) -> Matrix X (n , m)
+transpose = {!!}
+
+
+----------------------------------------------------------------------------
+-- ??? 2.11 multiplication                                    (score: ? / 2)
+----------------------------------------------------------------------------
+
+-- implement matrix multiplication
+-- HINT: transpose and vdot can be useful
+
+matMult : forall {X m n p} ->
+          Matrix X (m , n) -> Matrix X (n , p) -> Matrix X (m , p)
+matMult xmn xnp = {!!}

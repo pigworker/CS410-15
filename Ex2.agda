@@ -4,7 +4,7 @@ module Ex2 where
 -- EXERCISE 2 -- STRUCTURE WITH VECTORS
 --
 -- VALUE:     15%
--- DEADLINE:  5pm, Friday 23 October (week 2)
+-- DEADLINE:  5pm, Friday 23 October (week 5)
 --
 -- DON'T SUBMIT, COMMIT!
 --

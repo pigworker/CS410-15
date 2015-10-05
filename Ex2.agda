@@ -71,7 +71,7 @@ vzip xs ys = {!!}
 -- you'll need to complete the view type yourself
 
 data Unzippable {X Y n} : Vec (X * Y) n -> Set where
-  unzipped : {!!} -> Unzippable {!!}
+  unzipped : {- some stuff -> -} Unzippable {!!}
   
 unzip : forall {X Y n}(xys : Vec (X * Y) n) -> Unzippable xys
 unzip xys = {!!}

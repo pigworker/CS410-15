@@ -34,9 +34,9 @@ if tt then t else e = t
 if ff then t else e = e
 
 -- dependent conditional cooked for partial application
-_<?>_ : forall {l}{P : Two -> Set l} -> P tt -> P ff -> (b : Two) -> P b
-(t <?> f) tt = t
-(t <?> f) ff = f
+caseTwo : forall {l}{P : Two -> Set l} -> P tt -> P ff -> (b : Two) -> P b
+caseTwo t f tt = t
+caseTwo t f ff = f
 
 
 ----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ S * T = Sg S \ _ -> T
 infixr 4 _,_ _*_
 
 _+_ : Set -> Set -> Set
-S + T = Sg Two (S <?> T)
+S + T = Sg Two (caseTwo S T)
 
 pattern inl s = tt , s
 pattern inr t = ff , t
@@ -70,3 +70,17 @@ infix 1 _==_
 {-# BUILTIN EQUALITY _==_ #-}
 {-# BUILTIN REFL refl #-}
 
+
+----------------------------------------------------------------------------
+-- functional plumbing
+----------------------------------------------------------------------------
+
+id : forall {l}{X : Set l} -> X -> X
+id x = x
+
+-- the type of composition can be generalized further
+_o_ : forall {l}{X Y Z : Set l} -> (Y -> Z) -> (X -> Y) -> X -> Z
+(f o g) x = f (g x)
+
+_$_ : forall{l}{X Y : Set l} -> (X -> Y) -> X -> Y
+f $ x = f x

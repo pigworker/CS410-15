@@ -13,6 +13,7 @@ data Nat : Set where
 _+N_ : Nat -> Nat -> Nat
 zero  +N n = n
 suc m +N n = suc (m +N n)
+infixr 3 _+N_
 
 +Mon : Monoid Nat
 +Mon = record
@@ -28,3 +29,18 @@ suc m +N n = suc (m +N n)
     asHelp : (m m' m'' : Nat) -> m +N (m' +N m'') == (m +N m') +N m''
     asHelp zero m' m'' = refl
     asHelp (suc m) m' m'' rewrite asHelp m m' m'' = refl
+
+_*N_ : Nat -> Nat -> Nat
+zero  *N n = zero
+suc m *N n = m *N n +N n
+infixr 4 _*N_
+
+_N>=_ : Nat -> Nat -> Set
+m      N>=  zero   =  One
+zero   N>=  suc n  =  Zero
+suc m  N>=  suc n  =  m N>= n
+
+N>=Unique : (m n : Nat)(p q : m N>= n) -> p == q
+N>=Unique m zero p q = refl
+N>=Unique zero (suc n) () q
+N>=Unique (suc m) (suc n) p q = N>=Unique m n p q

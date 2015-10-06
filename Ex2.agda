@@ -152,10 +152,10 @@ vdot xs ys = {!!}
 -- MATRICES
 ----------------------------------------------------------------------------
 
--- let's say that a w by h matrix is a column h high of rows w wide
+-- let's say that an h by w matrix is a column h high of rows w wide
 
 Matrix : Set -> Nat * Nat -> Set
-Matrix X (w , h) = Vec (Vec X w) h
+Matrix X (h , w) = Vec (Vec X w) h
 
 
 ----------------------------------------------------------------------------
@@ -194,6 +194,6 @@ transpose = {!!}
 -- implement matrix multiplication
 -- HINT: transpose and vdot can be useful
 
-matMult : forall {X m n p} ->
-          Matrix X (m , n) -> Matrix X (n , p) -> Matrix X (m , p)
+matMult : forall {m n p} ->
+          Matrix Nat (m , n) -> Matrix Nat (n , p) -> Matrix Nat (m , p)
 matMult xmn xnp = {!!}

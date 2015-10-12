@@ -17,13 +17,22 @@ record Applicative (T : Set -> Set) : Set1 where
     pure         : forall {X} -> X -> T X
     _<*>_        : forall {X Y} -> T (X -> Y) -> T X -> T Y
     -- LAWS ----------------------------------------------------
-    identity     : forall {X}(v : T X) -> pure id <*> v == v
+    identity     : forall {X}(v : T X) ->
+
+                      pure id <*> v == v
+                      
     composition  : forall {X Y Z}(u : T (Y -> Z))(v : T (X -> Y))(w : T X) ->
-                   pure _o_ <*> u <*> v <*> w == u <*> (v <*> w)
+    
+                      pure _o_ <*> u <*> v <*> w == u <*> (v <*> w)
+                      
     homomorphism : forall {X Y}(f : X -> Y)(x : X) ->
-                   pure (f x) == pure f <*> pure x
+
+                      pure (f x) == pure f <*> pure x
+
     interchange  : forall {X Y}(u : T (X -> Y))(y : X) ->
-                   u <*> pure y == pure (\ f -> f y) <*> u
+
+                      u <*> pure y == pure (\ f -> f y) <*> u
+
   infixl 10 _<*>_
 
 

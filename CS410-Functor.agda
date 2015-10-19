@@ -56,3 +56,16 @@ record Traversable (T : Set -> Set) : Set1 where
                 forall {A B} -> (A -> F B) -> T A -> F (T B)
     -- LAWS ----------------------------------------------------
     -- maybe later
+
+record Monad (T : Set -> Set) : Set1 where
+  field
+    -- OPERATIONS ----------------------------------------------
+    return       : forall {X} -> X -> T X
+    _>>=_        : forall {X Y} -> T X -> (X -> T Y) -> T Y
+    -- DERIVED OPERATIONS
+  _<=<_ : {X Y Z : Set} -> (Y -> T Z) -> (X -> T Y) -> (X -> T Z)
+  (f <=< g) x = g x >>= f
+    -- LAWS ----------------------------------------------------
+
+  infixr 5 _>>=_
+

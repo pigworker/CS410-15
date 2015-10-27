@@ -66,8 +66,8 @@ errorMonad E = {!!}
 -- ??? 3.3 the environment monad transformer                   (score: ? / 1)
 ----------------------------------------------------------------------------
 
--- show that "+ E" is monadic, generalising the "Maybe" monad by allowing
--- some sort of error report
+-- show that any monad can be adapted to thread some environment information
+-- as well as whatever else it already managed
 
 envMonad : (G : Set){M : Set -> Set} -> Monad M ->
            Monad \ V -> G -> M V      -- "computation in an environment"

@@ -1,0 +1,101 @@
+[type-driven]
+
+    programming in an editor which offers type information about variables in scope and open problems
+    using types to search for code
+    stepwise refinement of programming problems
+
+[finite types <- type-driven]
+
+    empty type, unit type, Boolean type
+    case analysis, absurdity elimination
+    dependent case analysis versus homogeneous conditionals
+
+[numbers and lists <- type-driven]
+
+    addition, multiplication, concatenation
+    partiality in subtraction, splitting and zipping
+    resolving partiality with dummy answers or with explicit failure
+
+[evidence <- finite type, numbers and lists]
+
+    propositions as types
+    defining the natural number ordering relation by recursion
+    eliminating failure from subtraction by demanding evidence
+
+[vectors <- evidence]
+
+    building invariants into types
+    eliminating failure from splitting and zipping
+    splitting as a view
+
+[categories and functors]
+
+    concept of category; examples: sets-and-functions, monoids, preorders
+    concept of functor; examples: maybe, vectors with map, vectors with take
+
+[applicative <- vectors, categories and functors]
+
+    applicative structure for vectors, deriving map and zip
+    degenerate applicatives from monoids
+
+[traversable <- applicative]
+
+    traversable structure for vectors, deriving sum
+    matrices as vectors of vectors; transposition; matrix-vector multiplication; matrix-matrix multiplication
+
+[monad <- applicative]
+
+    monads choosing versus applicatives fixing the structure of computation
+    separating examples for functor, applicative, monad
+    monads for notions of computation
+    Kleisli category for a monad
+
+[sigma <- evidence]
+
+    sigma types as dependent pairs, generalising both binary sums and binary products
+    sigma types as existential quantification
+
+[container <- sigma, categories and functors]
+
+    containers and their extension as functors
+    containers as command-response protocols for interaction
+    containers as shape-position descriptions of data
+    closure properties of containers: sums, products, identity, composition, tensor
+    category of containers, container morphisms
+
+[datatype generics <- container]
+
+    polynomial functors and their properties
+    universes encoding functors
+    programs abstracting over universe codes, e.g., decidable equality
+
+[syntax and interaction <- container, monad]
+
+    free monads as iterated interaction with sequencing
+    free monads as syntax with free variables with substitution
+    effect handling as recursion on free monads
+    semantics of simple programs
+
+[corecursion <- container, monad]
+
+    generating infinite behaviour on demand
+    the delay monad
+    Turing-completeness of total languages
+
+[indexed structures <- datatype generics, syntax and interaction]
+
+    self-describing universe of inductive families
+    indexed containers and stateful interaction
+    monads on indexed sets; examples: file IO, rectangular tiling
+    protocol-respecting interaction
+    type-safe representation and evaluation
+
+[zippers and comonads <- datatype generics]
+
+    zippers from one-hole contexts, computed by symbolic differentiation of functors
+    comonads as contextualization
+
+[applications programming <- zippers and comonads, indexed structures, corecursion]
+
+    applications as systems of contextualized productive co-operative processes
+    editors

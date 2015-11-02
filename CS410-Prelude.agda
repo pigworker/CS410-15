@@ -70,6 +70,9 @@ infix 1 _==_
 {-# BUILTIN EQUALITY _==_ #-}
 {-# BUILTIN REFL refl #-}
 
+sym : forall {l}{X : Set l}{x y : X} -> x == y -> y == x
+sym refl = refl
+
 
 ----------------------------------------------------------------------------
 -- functional plumbing

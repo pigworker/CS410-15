@@ -23,7 +23,7 @@ record Applicative (T : Set -> Set) : Set1 where
                       
     composition  : forall {X Y Z}(u : T (Y -> Z))(v : T (X -> Y))(w : T X) ->
     
-                      pure _o_ <*> u <*> v <*> w == u <*> (v <*> w)
+                      pure (\ f g x -> f (g x)) <*> u <*> v <*> w == u <*> (v <*> w)
                       
     homomorphism : forall {X Y}(f : X -> Y)(x : X) ->
 
@@ -44,10 +44,12 @@ App2Fun {T} app = record {
   where
     open Applicative app
     lem : forall {X Y Z}(f : Y -> Z)(g : X -> Y)(x : T X) ->
-          pure (f o g) <*> x == pure f <*> (pure g <*> x)
-    lem {X} f g x
-      rewrite homomorphism (_o_ f) g | homomorphism (_o_ {X = X}) f =
-        composition (pure f) (pure g) x
+          pure (\ x -> f (g x)) <*> x == pure f <*> (pure g <*> x)
+    lem {X}{Y}{Z} f g x rewrite
+        (sym (composition (pure f) (pure g) x))
+      | (sym (homomorphism (\ (f : Y -> Z)(g : X -> Y) x -> f (g x)) f))
+      | (sym (homomorphism (\ (g : X -> Y) x -> f (g x)) g))
+      = refl
 
 record Traversable (T : Set -> Set) : Set1 where
   field
@@ -62,10 +64,26 @@ record Monad (T : Set -> Set) : Set1 where
     -- OPERATIONS ----------------------------------------------
     return       : forall {X} -> X -> T X
     _>>=_        : forall {X Y} -> T X -> (X -> T Y) -> T Y
-    -- DERIVED OPERATIONS
+    -- LAWS ----------------------------------------------------
+    law1 : forall {X Y}(x : X)(f : X -> T Y) -> return x >>= f == f x
+    law2 : forall {X}(t : T X) -> t >>= return == t
+    law3 : forall {X Y Z}(f : X -> T Y)(g : Y -> T Z)(t : T X) ->
+           (t >>= f) >>= g == t >>= (\ x -> f x >>= g)  
+  -- DERIVED OPERATIONS
   _<=<_ : {X Y Z : Set} -> (Y -> T Z) -> (X -> T Y) -> (X -> T Z)
   (f <=< g) x = g x >>= f
-    -- LAWS ----------------------------------------------------
 
+    
   infixr 5 _>>=_
 
+record Monad-Alg {T : Set -> Set}(M : Monad T) : Set1 where
+  field
+    -- OPERATIONS ----------------------------------------------
+    A : Set
+    A-map : forall {X} -> (X -> A) -> T X -> A
+  open Monad M
+     -- LAWS ----------------------------------------------------   
+  field
+    A-law1 : forall {X}(f : X -> A)(x : X) -> A-map f (return x) == f x
+    A-law2 : forall {X Y}(g : X -> T Y)(f : Y -> A)(t : T X) ->
+             A-map (A-map f o g) t == A-map f (t >>= g)

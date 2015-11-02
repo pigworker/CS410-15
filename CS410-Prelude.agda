@@ -73,6 +73,11 @@ infix 1 _==_
 sym : forall {l}{X : Set l}{x y : X} -> x == y -> y == x
 sym refl = refl
 
+-- this proof principle is useful for proving laws, don't use it for
+-- fixing type problems in your programs
+
+postulate ext : forall {l m}{A : Set l}{B : Set m}{f g : A -> B} ->
+            (forall a -> f a == g a) -> f == g
 
 ----------------------------------------------------------------------------
 -- functional plumbing

@@ -94,7 +94,7 @@ Compute : Set{- variables -} -> Set{- values -} -> Set
 Compute X V = Env X -> V + InterpretError  -- how to compute a V
 
 computeMonad : {X : Set} -> Monad (Compute X)
-computeMonad = {!!} -- build this from the above parts
+computeMonad = {!!}  -- build this from the above parts
 
 -- This operation should explain how to get the value of a variable
 -- from the environment.

@@ -52,9 +52,23 @@ look (<> , snd) = {!!}
 
 -- the free monad on a command-response system
 
-data Free (C : Set)(R : C -> Set)(X : Set) : Set where
-  ret : X -> Free C R X
-  do : (C <| R) (Free C R X) -> Free C R X
+module FREEMONAD (C : Set)(R : C -> Set) where
+
+  data Free (X : Set) : Set where
+    ret : X -> Free X
+    do : (C <| R) (Free X) -> Free X
+
+  graft : {X Y : Set} -> Free X -> (X -> Free Y) -> Free Y
+  graft fx k = {!!}
+
+  freeMonad : Monad Free
+  freeMonad = record
+    {  return  = {!!}
+    ;  _>>=_   = graft
+    ;  law1 = {!!}
+    ;  law2 = {!!}
+    ;  law3 = {!!}
+    }
 
 -- tree-like data
 

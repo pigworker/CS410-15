@@ -50,6 +50,8 @@ look : {X : Set} -> IC X -> Zero
 look (<> , snd) = {!!}
 -}
 
+postulate goAway : {X : Set} -> X
+
 -- the free monad on a command-response system
 
 module FREEMONAD (C : Set)(R : C -> Set) where
@@ -59,15 +61,23 @@ module FREEMONAD (C : Set)(R : C -> Set) where
     do : (C <| R) (Free X) -> Free X
 
   graft : {X Y : Set} -> Free X -> (X -> Free Y) -> Free Y
-  graft fx k = {!!}
+  graft (ret x) k = k x
+  graft (do (c , rx)) k = do (c , (\ r -> graft (rx r) k))
+
+  graftLawHelp : {X : Set}(c : C)(rx : R c -> Free X)(r : R c) ->
+    graft (rx r) ret == rx r
+  graftLaw2 : {X : Set}(t : Free X) -> graft t ret == t
+  graftLaw2 (ret x) = refl
+  graftLaw2 (do (c , rx)) rewrite (ext (graftLawHelp c rx)) = refl
+  graftLawHelp c rx r = graftLaw2 (rx r)
 
   freeMonad : Monad Free
   freeMonad = record
-    {  return  = {!!}
+    {  return  = ret
     ;  _>>=_   = graft
-    ;  law1 = {!!}
-    ;  law2 = {!!}
-    ;  law3 = {!!}
+    ;  law1 = \ _ _ -> refl
+    ;  law2 = graftLaw2
+    ;  law3 = goAway
     }
 
 -- tree-like data

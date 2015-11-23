@@ -81,8 +81,12 @@ plug (label X) () r
 plug rec       <> r = r
 
 Shape : Data -> Set
-Shape D = {!!}
+Shape D = [[ D ]] One
 
 Positions : (D : Data) -> Shape D -> Set
-Positions D S = {!!}
+Positions (D +D E) (inl d) = Positions D d
+Positions (D +D E) (inr e) = Positions E e
+Positions (D *D E) (d , e) = Positions D d + Positions E e
+Positions (label X) x = Zero
+Positions rec <> = One
 

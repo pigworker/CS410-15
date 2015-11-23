@@ -5,7 +5,7 @@ module Ex4 where
    (quite soon). At least you can get cracking: I promise not to break
    anything, just to add a bit more on the end.
 
-   The deadline for this is midnight on the Monday of Week 12 (15 Dec).
+   The deadline for this is Friday of Week 12 (11 Dec).
    It'd be good to get the marks in before Christmas, but if the end of
    term is looking deadlinetastic, please open negotiations.
 -}

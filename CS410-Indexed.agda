@@ -64,6 +64,10 @@ IC : forall {I J} -> I => J -> (I -> Set) -> (J -> Set)
 IC {I}{J} C X j = Sg (Shape j) \ s -> (p : Position j s) -> X (index j s p)
   where open _=>_ C
 
+icFunctorIx : forall {I J}(C : I => J) -> FunctorIx (IC C)
+icFunctorIx C = record { mapIx = \ {f (s , k) -> s , \ p -> f (k p) }  }
+  where open _=>_ C
+
 -- iterating an indexed container whose input (child) and output (parent) index
 -- types are the same gives us "strategy trees"
 

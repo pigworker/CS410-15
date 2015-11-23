@@ -219,10 +219,7 @@ CPInterface : CPState => CPState
 CPInterface = {!!}
 
 {- 4.6.2 Secondly, you should implement your copying process, working to your
-   interface. I will let you switch off the termination checker: you cannot
-   predict in advance how long the copying process will go on, as you have
-   not seen the source file yet. (Later, we'll learn how to be honest about
-   things which might go on for ever, but for now, let's cheat.)
+   interface.
 -}
 
 

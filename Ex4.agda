@@ -150,7 +150,7 @@ GrowL CRn = {!!}
 -- COMBINING TWO INTERFACES WITH SEPARATE STATE
 ---------------------------------------------------------------------------
 
-{- 4.5 Making use of 4.4 and 4.5, show how to combine two interfaces which
+{- 4.5 Making use of 4.3 and 4.4, show how to combine two interfaces which
        operate independently on separate state: commands from one should
        not affect the state of the other.
 -}

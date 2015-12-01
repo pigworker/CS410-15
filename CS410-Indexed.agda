@@ -89,6 +89,7 @@ data Iterating {I}(C : I => I)(X : I -> Set)(i : I) : Set
 
 record IterIx {I}(C : I => I)(X : I -> Set)(i : I) : Set where
   coinductive
+  constructor step
   field
     force : Iterating C X i
 open IterIx public

@@ -1,5 +1,3 @@
-{-# OPTIONS --allow-unsolved-metas #-}
-
 module CS410-Nat where
 
 open import CS410-Prelude

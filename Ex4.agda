@@ -1,3 +1,7 @@
+{-# OPTIONS --copatterns #-}
+{-# IMPORT Ex4Haskell #-}
+{-# IMPORT System.IO #-}
+
 module Ex4 where
 
 {- I'm sorry I haven't quite finished setting this exercise yet, but by
@@ -8,10 +12,16 @@ module Ex4 where
    The deadline for this is Friday of Week 12 (11 Dec).
    It'd be good to get the marks in before Christmas, but if the end of
    term is looking deadlinetastic, please open negotiations.
+
+   UPDATE: I had to work around a bug in Agda to get this finished, so
+   it took longer than I had hoped. I apologise, and will be flexible
+   with deadlines, consequently. Also, I had to tweak the setup for
+   cp a little, asking you to abstract out your definition of the
+   FinalState of cp. I need to refer to it in the later code. That may
+   cause a wee merge conflict, easily rectified with cut and paste.
 -}
 
 open import CS410-Prelude
-open import CS410-Nat
 open import CS410-Indexed
 
 data List (X : Set) : Set where  -- X scopes over the whole declaration...
@@ -25,12 +35,15 @@ infixr 3 _::_
 {-# BUILTIN LIST List #-}
 {-# BUILTIN NIL [] #-}
 {-# BUILTIN CONS _::_ #-}
+{-# COMPILED_DATA List [] [] (:) #-}
 
 postulate -- this means that we just suppose the following things exist...
   Char : Set
   String : Set
 {-# BUILTIN CHAR Char #-}
+{-# COMPILED_TYPE Char Char #-}
 {-# BUILTIN STRING String #-}
+{-# COMPILED_TYPE String String #-}
 
 primitive -- these are baked in; they even work!
   primCharEquality : Char -> Char -> Two
@@ -222,6 +235,8 @@ CPInterface = {!!}
    interface.
 -}
 
+FinalState : CPState -> Set
+FinalState c = {!!}
 
 cp : (sourceFile targetFile : String) -> IterIx CPInterface {!!} {!!}
 cp sourceFile targetFile = {!!}
@@ -243,3 +258,271 @@ cp sourceFile targetFile = {!!}
 ---------------------------------------------------------------
 -- TO BE CONTINUED... 
 ---------------------------------------------------------------
+
+-- The rest of the exercise is to fill selected gaps in code that
+-- gets your cp process to the stage where it actually compiles.
+
+-- Agda version 2.4.2.4 is needed t compile the "copatterns" involved
+-- in the code, but you should be able to complete the exercise
+-- without upgrading, if you are currently using an earlier version.
+-- It is only the business of generating a standalone executable that
+-- needs the upgrade. Still, it'd be nice to see it go, wouldn't it?
+
+-- The key is to build a device driver between your carefully
+-- designed command-response system and "scripts" built from
+-- low-level Haskell commands, maintaining the file handles
+-- involved as you go.
+
+-- Then you'll need to explain how to run the low-level script.
+
+---------------------------------------------------------------
+-- What's a Device Driver? (My bit. Do read.)
+---------------------------------------------------------------
+
+open _=>_ public
+
+Driver :
+  {I J : Set}              -- I is "high-level state" ; J, "low"
+  (Sync : I -> J -> Set)   -- when are states "in sync"?
+  (Hi : I => I)            -- high-level command-response system
+  (Lo : J => J)            -- low-level command-response system
+  -> Set
+  
+Driver {I}{J} Sync Hi Lo =
+  forall i j -> Sync i j ->     -- whenever we're in sync,
+  (c : Shape Hi i) ->           -- we can take a high-level command
+  Sg (Shape Lo j) \ c' ->       -- and give the low-level version,
+  (r' : Position Lo j c') ->    -- then take the low-level response
+  Sg (Position Hi i c) \ r ->   -- and give the high-level version,
+  Sync (index Hi i c r) (index Lo j c' r')  -- and stay in sync!
+
+
+drive : forall  {I J}{Sync : I -> J -> Set}
+                {Hi : I => I}{Lo : J => J}
+                (D : Driver Sync Hi Lo)
+                {X : I -> Set}
+                (i : I)(j : J)
+                (ij : Sync i j) ->  -- if we're in sync and have
+                IC Hi X i ->        -- a high-level way to get an X
+                IC Lo (\ j -> Sg I \ i -> Sync i j * X i) j
+                  -- then we have a low-level plan to
+                  -- stay in sync and get an X
+drive D i j ij (c , k) =
+  let x = D i j ij c ; c' = fst x ; D' = snd x
+  in  c' , \ r' ->  -- issue low-level command c', get response r'
+      let y = D' r' ; r = fst y ; s = snd y
+      in  _ , s , k r  -- choose sync state from driver, call continuation
+
+
+---------------------------------------------------------------
+-- SCRIPTING COMMANDS (your bit)
+---------------------------------------------------------------
+
+{- 4.7 Complete the definition of the command response system
+   for scripting commands built from another command response system,
+   C. A scripted command is a whole strategy for interacting with C,
+   the way you can write shell scripts which give strategies for
+   issuing commands at a terminal. Your job is to give the type
+   for responses (which should pack up all the responses to the
+   commands) and compute the next state (which should be the state
+   the system reaches when the script stops).
+
+   Then you should construct the function which translates
+   one SCRIPT C interaction to many C interactions. That's to say,
+   implement the "script interpreter".
+-}
+
+SCRIPT : forall {I} -> (I => I) -> (I => I)
+SCRIPT {I} C = FreeIx C (\ _ -> One) <! ScriptR / ScriptN where
+  ScriptR : (i : I) -> FreeIx C (\ _ -> One) i -> Set
+  ScriptR i cs = {!!}
+  ScriptN : (i : I)(c : FreeIx C (\ _ -> One) i) -> ScriptR i c -> I
+  ScriptN i cs rs = {!!}
+  
+unscript : forall {I}{X : I -> Set}(C : I => I) ->
+           [ IC (SCRIPT C) X -:> FreeIx C X ]
+unscript {I}{X} C (c , k) = help c k where
+  help : {i : I}(c : FreeIx C (\ _ -> One) i)
+         (k : (p : Position (SCRIPT C) i c) ->
+                X (index (SCRIPT C) i c p)) ->
+         FreeIx C X i
+  help cs k = {!!}
+
+
+---------------------------------------------------------------
+-- An Interface to Haskell IO (also my bit)
+---------------------------------------------------------------
+
+-- an Agda Maybe-type which connects to Haskell's
+data Maybe (X : Set) : Set where
+  yes : X -> Maybe X
+  no  : Maybe X
+{-# COMPILED_DATA Maybe Maybe Just Nothing #-}
+
+-- an Agda Either-type which connects to Haskell's
+data Either (S T : Set) : Set where
+  left  : S -> Either S T
+  right : T -> Either S T
+{-# COMPILED_DATA Either Either Left Right #-}
+
+-- a copy of Haskell's file access more datatype
+data IOMode : Set where
+  readMode writeMode appendMode readWriteMode : IOMode
+{-# COMPILED_DATA IOMode System.IO.IOMode System.IO.ReadMode System.IO.WriteMode System.IO.AppendMode System.IO.ReadWriteMode #-}
+
+-- Haskell's file handles imported abstractly
+postulate Handle : Set
+{-# COMPILED_TYPE Handle System.IO.Handle #-}
+
+-- The Low-Level Haskell Command-Response System. Please use wisely.
+
+data HaskellIOCommand : Set where
+  hOpen                   : String  -> IOMode  -> HaskellIOCommand
+  hClose hIsEOF hGetChar  : Handle             -> HaskellIOCommand
+  hPutChar                : Handle  -> Char    -> HaskellIOCommand
+  hError                  : String             -> HaskellIOCommand
+
+HaskellIOResponse : HaskellIOCommand -> Set
+HaskellIOResponse (hOpen f m)     = Maybe Handle
+HaskellIOResponse (hClose h)      = One
+HaskellIOResponse (hIsEOF h)      = Two
+HaskellIOResponse (hGetChar h)    = Char
+HaskellIOResponse (hPutChar h c)  = One
+HaskellIOResponse (hError e)      = Zero
+
+HASKELLIO : One => One
+HASKELLIO = (\ _ -> HaskellIOCommand) <! (\ _ -> HaskellIOResponse) / _
+
+postulate       -- Haskell has a monad for doing IO, which we use at the top level
+  IO      : Set -> Set
+  return  : {A : Set} -> A -> IO A
+  _>>=_   : {A B : Set} -> IO A -> (A -> IO B) -> IO B
+  hOpenIO : String -> IOMode -> IO (Maybe Handle)
+  hCloseIO : Handle -> IO One
+  hIsEOFIO : Handle -> IO Two
+  hGetCharIO : Handle -> IO Char
+  hPutCharIO : Handle -> Char -> IO One
+  hErrorIO : {X : Set} -> String -> IO X
+  mainLoop : {S : Set} -> (S -> Either String (IO S)) -> (String -> String -> S) -> IO One
+infixl 1 _>>=_
+{-# BUILTIN IO IO #-}
+{-# COMPILED_TYPE IO IO #-}
+{-# COMPILED return (\ _ -> return)    #-}
+{-# COMPILED _>>=_  (\ _ _ -> (>>=)) #-}
+{-# COMPILED hOpenIO Ex4Haskell.hOpenIO #-}
+{-# COMPILED hCloseIO Ex4Haskell.hCloseIO #-}
+{-# COMPILED hIsEOFIO Ex4Haskell.hIsEOFIO #-}
+{-# COMPILED hGetCharIO Ex4Haskell.hGetCharIO #-}
+{-# COMPILED hPutCharIO Ex4Haskell.hPutCharIO #-}
+{-# COMPILED hErrorIO (\ _ -> Ex4Haskell.hErrorIO) #-}
+{-# COMPILED mainLoop (\ _ -> Ex4Haskell.mainLoop) #-}
+
+-- We explain how to do one command.
+
+doHaskellCommand : (c : HaskellIOCommand) -> IO (HaskellIOResponse c)
+doHaskellCommand (hOpen n m) = hOpenIO n m
+doHaskellCommand (hClose h)       = hCloseIO h
+doHaskellCommand (hIsEOF h)       = hIsEOFIO h
+doHaskellCommand (hGetChar h)     = hGetCharIO h
+doHaskellCommand (hPutChar h c)   = hPutCharIO h c
+doHaskellCommand (hError e)       = hErrorIO e
+
+-- We need a MONAD MORPHISM to translate our HASKELLIO monad to
+-- Haskell's IO Monad. A monad morphism is a function between monads
+-- which respects return and >>=. Every monad morphism from a FREE
+-- monad is given by explaining how to do one command.
+
+haskellIO : forall {X} -> FreeIx HASKELLIO (\ _ -> X) <> -> IO X
+haskellIO (ret x)        = return x
+haskellIO (do (c , k))   = doHaskellCommand c >>= \ v -> haskellIO (k v)
+
+
+---------------------------------------------------------------
+-- The Driver (your bit)
+---------------------------------------------------------------
+
+-- Due to an annoying bug in Agda (which I reported and which has
+-- been fixed in the head version), I had to resort to making
+-- a rubbish version of One, called Dull.
+
+postulate
+  Dull : Set       -- it's a unit type
+  dull : Dull      -- see? it has one thing in it?
+                   -- you can't pattern match on it
+
+-- For read and write states, we can say which handles we need to
+-- know. We should know handles only when files are open.
+
+RH : ReadState -> Set
+RH (opened eof)  = Handle
+RH closed        = Dull
+
+WH : WriteState -> Set
+WH opened        = Handle
+WH closed        = Dull
+
+{- 4.8 Define the appropriate notion of Sync for your notion of
+   CPState. It should be a collection of the handles appropriate
+   for the files currently open, built using RH and WH.
+
+   Then build the driver, carefully. Remember, when reading, to
+   check the end-of-file status as required.
+-}
+
+HANDLES : CPState -> One -> Set
+HANDLES cps = {!!}
+
+haskellDriver : Driver HANDLES CPInterface (SCRIPT HASKELLIO)
+haskellDriver i j s c = {!!}
+
+
+---------------------------------------------------------------
+-- Putting it all together
+---------------------------------------------------------------
+
+-- A concrete STATE is some CPState for which we have
+--   (i)   the right handles, and
+--   (ii)  a plan for how to make progress with copying.
+
+STATE : Set
+STATE = Sg CPState \ i ->
+        HANDLES i <> * IterIx CPInterface FinalState i
+
+{- 4.9 For your chosen final state, you need to explain how to
+   issue a message signalling successful completion. The empty
+   string will do, but perhaps you want more. -}
+
+finalMessage : (i : CPState) -> FinalState i -> String
+finalMessage i x = {!!}
+
+-- Now, in each state, we will either discover we're done, or
+-- we'll learn the next bunch of Haskell commands to do.
+
+runCP : STATE -> Either String (IO STATE)
+runCP (i , h , cp) with force cp
+runCP (i , h , cp)  | ret x  = left (finalMessage i x)
+runCP (i , h , cp)  | do c   = right
+  (haskellIO (unscript HASKELLIO
+    (drive haskellDriver {IterIx CPInterface FinalState} i <> h c)))
+
+{- 4.10 To complete the main program, fill in the starting
+   CPState and its associated handle information. -}
+   
+main : IO One
+main = mainLoop runCP \ src trg ->
+         {!!} , {!!} , cp src trg
+
+-- Now, to compile this (using Agda 2.4.2.4), grab a terminal and
+-- issue the command
+--
+--   agda --compile Ex4.agda
+--
+-- and if you're very lucky, you should be able to issue commands
+--
+--   ./Ex4 <sourceFile> <targetFile>
+--
+-- Be careful not to overwrite your homework.
+--
+-- PS if in doubt about Agda versions, try
+--
+--   agda -V

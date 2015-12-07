@@ -20,13 +20,14 @@ magic ()
 record One : Set where
   constructor <>
 open One public
-
+{-# COMPILED_DATA One () () #-}
 
 ----------------------------------------------------------------------------
 -- Two -- the type of Boolean values
 ----------------------------------------------------------------------------
 
 data Two : Set where tt ff : Two
+{-# COMPILED_DATA Two Bool True False #-}
 
 -- nondependent conditional with traditional syntax
 if_then_else_ : {l : Level}{X : Set l} -> Two -> X -> X -> X

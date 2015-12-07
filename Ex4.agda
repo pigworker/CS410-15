@@ -238,7 +238,7 @@ CPInterface = {!!}
 FinalState : CPState -> Set
 FinalState c = {!!}
 
-cp : (sourceFile targetFile : String) -> IterIx CPInterface {!!} {!!}
+cp : (sourceFile targetFile : String) -> IterIx CPInterface FinalState {!!}
 cp sourceFile targetFile = {!!}
 
 {- HINTS

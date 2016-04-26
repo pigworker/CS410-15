@@ -27,9 +27,9 @@ open import CS410-Monoid
 
 
 ------------------------------------------------------------------------------
--- CHARACTERS AND STRINGS
+-- CHARACTERS AND STRINGS  -- moved to CS410-Prelude
 ------------------------------------------------------------------------------
-
+{-
 data List (X : Set) : Set where  -- X scopes over the whole declaration...
   []    : List X                 -- ...so you can use it here...
   _::_  : X -> List X -> List X  -- ...and here.
@@ -56,6 +56,7 @@ primitive -- these are baked in; they even work!
   primStringAppend : String -> String -> String
   primStringToList : String -> List Char
   primStringFromList : List Char -> String
+-}
 
 
 ------------------------------------------------------------------------------
@@ -170,14 +171,14 @@ matrixCut {C} = record
 ---------------------------------------------------------------------------
 
 -- We're going to be making displays from coloured text.
-
+{- moved to prelude
 data Colour : Set where
   black red green yellow blue magenta cyan white : Colour
 {-# COMPILED_DATA Colour HaskellSetup.Colour
       HaskellSetup.Black HaskellSetup.Red HaskellSetup.Green
       HaskellSetup.Yellow HaskellSetup.Blue HaskellSetup.Magenta
       HaskellSetup.Cyan HaskellSetup.White #-}
-
+-}
 -- Each cell in a display has this information:
 
 record Cell : Set where

@@ -252,13 +252,14 @@ testSubN3-3 = refl
 
 
 ----------------------------------------------------------------------------
--- List -- the thing that was [ .. ] in Haskell
+-- List -- the thing that was [ .. ] in Haskell -- moved to CS410-Prelude
 ----------------------------------------------------------------------------
-
+{-
 data List (X : Set) : Set where  -- X scopes over the whole declaration...
   []    : List X                 -- ...so you can use it here...
   _::_  : X -> List X -> List X  -- ...and here.
 infixr 3 _::_
+-}
 
 
 ----------------------------------------------------------------------------

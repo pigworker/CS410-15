@@ -27,6 +27,9 @@ open One public
 ----------------------------------------------------------------------------
 
 data Two : Set where tt ff : Two
+{-# BUILTIN BOOL Two #-}
+{-# BUILTIN TRUE tt #-}
+{-# BUILTIN FALSE ff #-}
 {-# COMPILED_DATA Two Bool True False #-}
 
 -- nondependent conditional with traditional syntax
@@ -93,3 +96,50 @@ _o_ : forall {l}{X Y Z : Set l} -> (Y -> Z) -> (X -> Y) -> X -> Z
 
 _$_ : forall{l}{X Y : Set l} -> (X -> Y) -> X -> Y
 f $ x = f x
+
+
+----------------------------------------------------------------------------
+-- lists
+----------------------------------------------------------------------------
+
+data List (X : Set) : Set where  -- X scopes over the whole declaration...
+  []    : List X                 -- ...so you can use it here...
+  _::_  : X -> List X -> List X  -- ...and here.
+infixr 3 _::_
+{-# COMPILED_DATA List [] [] (:) #-}
+{-# BUILTIN LIST List #-}
+{-# BUILTIN NIL [] #-}
+{-# BUILTIN CONS _::_ #-}
+
+----------------------------------------------------------------------------
+-- chars and strings
+----------------------------------------------------------------------------
+
+postulate       -- this means that we just suppose the following things exist...
+  Char : Set
+  String : Set
+{-# BUILTIN CHAR Char #-}
+{-# COMPILED_TYPE Char Char #-}      -- ...and by the time we reach Haskell...
+{-# BUILTIN STRING String #-}
+{-# COMPILED_TYPE String String #-}  -- ...they *do* exist!
+
+primitive       -- these are baked in; they even work!
+  primCharEquality    : Char -> Char -> Two
+  primStringAppend    : String -> String -> String
+  primStringToList    : String -> List Char
+  primStringFromList  : List Char -> String
+
+
+---------------------------------------------------------------------------
+-- COLOURS
+---------------------------------------------------------------------------
+
+-- We're going to be making displays from coloured text.
+
+data Colour : Set where
+  black red green yellow blue magenta cyan white : Colour
+{-# COMPILED_DATA Colour HaskellSetup.Colour
+      HaskellSetup.Black HaskellSetup.Red HaskellSetup.Green
+      HaskellSetup.Yellow HaskellSetup.Blue HaskellSetup.Magenta
+      HaskellSetup.Cyan HaskellSetup.White #-}
+

@@ -7,6 +7,7 @@ data Nat : Set where
   zero : Nat
   suc  : Nat -> Nat
 {-# BUILTIN NATURAL Nat #-}
+{-# COMPILED_DATA Nat HaskellSetup.Nat HaskellSetup.Zero HaskellSetup.Suc #-}
 
 _+N_ : Nat -> Nat -> Nat
 zero  +N n = n
@@ -42,3 +43,11 @@ N>=Unique : (m n : Nat)(p q : m N>= n) -> p == q
 N>=Unique m zero p q = refl
 N>=Unique zero (suc n) () q
 N>=Unique (suc m) (suc n) p q = N>=Unique m n p q
+
+plusSucFact : (m n : Nat) -> m +N suc n == suc m +N n
+plusSucFact zero n = refl
+plusSucFact (suc m) n rewrite plusSucFact m n = refl
+
+plusCommFact : (m n : Nat) -> m +N n == n +N m
+plusCommFact m zero = Monoid.runit +Mon m
+plusCommFact m (suc n) rewrite plusSucFact m n | plusCommFact m n = refl

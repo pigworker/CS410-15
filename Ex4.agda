@@ -24,33 +24,38 @@ module Ex4 where
 open import CS410-Prelude
 open import CS410-Indexed
 
+{-
 data List (X : Set) : Set where  -- X scopes over the whole declaration...
   []    : List X                 -- ...so you can use it here...
   _::_  : X -> List X -> List X  -- ...and here.
 infixr 3 _::_
+-}
 
-{-# BUILTIN BOOL Two #-}
-{-# BUILTIN TRUE tt #-}
-{-# BUILTIN FALSE ff #-}
-{-# BUILTIN LIST List #-}
-{-# BUILTIN NIL [] #-}
-{-# BUILTIN CONS _::_ #-}
-{-# COMPILED_DATA List [] [] (:) #-}
+{- BUILTIN BOOL Two #-}
+{- BUILTIN TRUE tt #-}
+{- BUILTIN FALSE ff #-}
+{- BUILTIN LIST List #-}
+{- BUILTIN NIL [] #-}
+{- BUILTIN CONS _::_ #-}
+{- COMPILED_DATA List [] [] (:) #-}
 
+{-
 postulate -- this means that we just suppose the following things exist...
   Char : Set
   String : Set
-{-# BUILTIN CHAR Char #-}
-{-# COMPILED_TYPE Char Char #-}
-{-# BUILTIN STRING String #-}
-{-# COMPILED_TYPE String String #-}
+-}
+{- BUILTIN CHAR Char #-}
+{- COMPILED_TYPE Char Char #-}
+{- BUILTIN STRING String #-}
+{- COMPILED_TYPE String String #-}
 
+{-
 primitive -- these are baked in; they even work!
   primCharEquality : Char -> Char -> Two
   primStringAppend : String -> String -> String
   primStringToList : String -> List Char
   primStringFromList : List Char -> String
-
+-}
 
 ---------------------------------------------------------------------------
 -- WRITING FILES, AN INTERFACE

@@ -269,11 +269,12 @@ _[]<-_ : forall {X} -> HExp' X -> HExp X -> HExp X
 (l +H[]) []<- t = l +H t
 -- ??? more cases here
 
-
+{-
 data List (X : Set) : Set where  -- X scopes over the whole declaration...
   []    : List X                 -- ...so you can use it here...
   _::_  : X -> List X -> List X  -- ...and here.
 infixr 3 _::_
+-}
 
 -- As we descend down into a term we can keep the pieces we pass along
 -- the way in a list, this is a zipper. For example, given the

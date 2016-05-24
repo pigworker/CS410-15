@@ -16,7 +16,7 @@ module Ex2 where
 open import CS410-Prelude
 open import CS410-Monoid
 open import CS410-Nat
-open import CS410-Vec
+open import CS410-Vec hiding (vec; vapp)
 open import CS410-Functor
 
 -- HINT: your tasks are heralded with the eminently searchable tag, "???"
